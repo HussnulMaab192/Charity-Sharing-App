@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../provider/add_attachment.dart';
 import '../../provider/obsecure_pswd.dart';
+import '../../services/firebase_methods/firebase_methods.dart';
 import '../../widgets/app_logo_text.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/custom_text_field.dart';
@@ -63,30 +64,19 @@ class _AddDonationState extends State<AddDonation> {
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
-        title: InkWell(
-            onTap: () {
-              pickmyImage();
-            },
-            child: const Text("Add Doantion")),
+        title: const Text("Add Doantion"),
         actions: [
-          image != null
-              ? Image.file(
-                  image!,
-                  width: 160,
-                  height: 150,
-                  fit: BoxFit.cover,
-                )
-              : ElevatedButton(
-                  onPressed: () async {
-                    Firebaseauth firebaseauth = Firebaseauth();
-                    String res = await firebaseauth.signOut();
-                    if (res == 'success') {
-                      Get.to(const SignIn());
-                    } else {
-                      return;
-                    }
-                  },
-                  child: const Text("log out "))
+          ElevatedButton(
+              onPressed: () async {
+                Firebaseauth firebaseauth = Firebaseauth();
+                String res = await firebaseauth.signOut();
+                if (res == 'success') {
+                  Get.to(const SignIn());
+                } else {
+                  return;
+                }
+              },
+              child: const Text("log out "))
         ],
       ),
       drawer: MyDrawer(context),
@@ -131,7 +121,6 @@ class _AddDonationState extends State<AddDonation> {
                       scrollDirection: Axis.vertical,
                       itemCount: value.list.length,
                       itemBuilder: (context, index) {
-                        // column empty nai ho sakta
                         return Expanded(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
@@ -142,8 +131,6 @@ class _AddDonationState extends State<AddDonation> {
                                   DataColumn(label: Text("Qty")),
                                   DataColumn(label: Text("cat")),
                                   DataColumn(label: Text("Action")),
-
-                                  // nice
                                 ], rows: [
                                   DataRow(cells: [
                                     DataCell(
@@ -373,6 +360,8 @@ class _AddDonationState extends State<AddDonation> {
     });
   }
 
+  FirebsaeMethods firebsaeMethods = FirebsaeMethods();
+  bool isLoading = false;
   // SUBMITING-TO-DATABASE
   submit() async {
     setState(() {

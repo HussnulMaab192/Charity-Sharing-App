@@ -26,5 +26,4 @@ class UserModel {
         "phoneNumber": phoneNumber,
         "location": location,
       };
-// 0302 7248877 Yousaf bhai devnatives
 }

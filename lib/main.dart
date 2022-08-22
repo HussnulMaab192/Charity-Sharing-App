@@ -1,3 +1,4 @@
+import 'package:charity/Screens/splash_screen.dart';
 import 'package:charity/provider/add_attachment.dart';
 import 'package:charity/provider/expiry_date.dart';
 import 'package:charity/provider/obsecure_pswd.dart';
@@ -26,44 +27,27 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ObsecurePassword()),
+        // ChangeNotifierProvider(create: (_) => ObsecurePassword()),
         ChangeNotifierProvider(create: (_) => ExpiryDate()),
         ChangeNotifierProvider(create: (_) => AddAttachment()),
       ],
       child: ScreenUtilInit(
-        designSize: const Size(360, 690),
+        designSize: const Size(360, 790),
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (BuildContext context, Widget? child) {
           return GetMaterialApp(
-              title: 'Flutter Demo',
-              debugShowCheckedModeBanner: false,
-              theme: ThemeData(
-                primaryColor: Colors.white,
-                backgroundColor: Colors.white,
+            title: 'Flutter Demo',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              primaryColor: Colors.white,
+              backgroundColor: Colors.white,
 
-                primarySwatch: Colors.orange,
-                // see
-              ),
-              home: StreamBuilder(
-                stream: FirebaseAuth.instance.idTokenChanges(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.active) {
-                    if (snapshot.hasData) {
-                      return const AddDonation();
-                    } else if (snapshot.hasError) {
-                      return showSnakeBar("No internet connection.", context);
-                    }
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  return const SignUp();
-                },
-              ));
+              primarySwatch: Colors.orange,
+              // see
+            ),
+            home: SplashScreen(),
+          );
         },
       ),
     );

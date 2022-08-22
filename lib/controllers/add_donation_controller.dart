@@ -1,6 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 class AddMoreList extends GetxController {
   var list = [];
 
@@ -15,24 +15,22 @@ class AddMoreList extends GetxController {
     required String category,
     // required Uint8List urlOfImg,
   }) {
-
     list.add({
       "title": title,
       "itemName": itemName,
       "quantity": quantity,
       "description": description,
-      "category":category,
+      "category": category,
       "pickUpLocation": pickUpLocation,
       "donationDescription": donationDescription,
       "attachment": attachment,
     });
 
-     Get.snackbar(
-                                  snackPosition: SnackPosition.BOTTOM,
-                                  colorText: Colors.black,
-                                  "Message",
-                                  "item added successfully"); 
-print(list.length);
+    Get.snackbar(
+        snackPosition: SnackPosition.BOTTOM,
+        colorText: Colors.black,
+        "Message",
+        "item added successfully");
     update();
   }
 }

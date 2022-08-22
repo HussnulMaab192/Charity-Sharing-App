@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-Column AppLogoText() {
+Column AppLogoText({String? title}) {
   return Column(
     children: [
       SizedBox(
@@ -45,9 +45,9 @@ Column AppLogoText() {
         height: 20.h,
       ),
       // Add Donation Text
-      const Center(
+      Center(
           child: Text(
-        "Add Your Donation ",
+        "${title ?? 'Add Your Donation '} ",
         style: TextStyle(
             fontSize: 24, fontFamily: 'Rubik Medium', color: Colors.black),
       )),

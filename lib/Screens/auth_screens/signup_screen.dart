@@ -1,5 +1,6 @@
 import 'package:charity/Screens/DonorScreens/add_donation.dart';
 import 'package:charity/Screens/auth_screens/signin_screen.dart';
+import 'package:charity/controllers/password_controller.dart';
 import 'package:charity/services/firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -47,8 +48,9 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         isLoading = true;
       });
-      Navigator.push(context,
-          MaterialPageRoute(builder: (context) => const AddDonation()));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Please verify Your Email")));
+      Get.off(const SignIn());
     } else {
       setState(() {
         isLoading = false;
@@ -109,11 +111,10 @@ class _SignUpState extends State<SignUp> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(PasswordCntroller());
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-
           //
           child: Column(
             children: [
@@ -209,10 +210,60 @@ class _SignUpState extends State<SignUp> {
                       SizedBox(height: 10.h),
 
                       // Enter Password
-                      Consumer<ObsecurePassword>(
-                        builder: (context, value, child) => TextFormField(
+                      // Consumer<ObsecurePassword>(
+                      //   builder: (context, value, child) => TextFormField(
+                      //     controller: _passwordController,
+                      //     obscureText: value.obsecure,
+                      //     decoration: InputDecoration(
+                      //       hintText: "Enter Password",
+                      //       hintStyle: const TextStyle(
+                      //           fontSize: 16,
+                      //           fontFamily: 'Rubik Medium',
+                      //           color: Colors.black),
+                      //       fillColor: Colors.orange,
+                      //       prefixIcon: const Icon(
+                      //         Icons.lock,
+                      //         color: Colors.orange,
+                      //       ),
+                      //       // const Icon(Icons.visibility,color: Colors.orange,),
+                      //       suffixIcon: IconButton(
+                      //         icon: const Icon(
+                      //           Icons.visibility,
+                      //           color: Colors.orange,
+                      //         ),
+                      //         onPressed: () {
+                      //           value.checkMyObsecure();
+                      //         },
+                      //       ),
+                      //       focusedBorder: OutlineInputBorder(
+                      //         borderSide: const BorderSide(
+                      //           color: Colors.orange,
+                      //         ),
+                      //         borderRadius: BorderRadius.circular(20),
+                      //       ),
+                      //       border: OutlineInputBorder(
+                      //         borderRadius: BorderRadius.circular(35),
+                      //       ),
+                      //       enabledBorder: OutlineInputBorder(
+                      //         borderSide: const BorderSide(
+                      //           color: Colors.orange,
+                      //         ),
+                      //         borderRadius: BorderRadius.circular(20),
+                      //       ),
+                      //     ),
+                      //     validator: (value) {
+                      //       if (value!.isEmpty) {
+                      //         return "Enter Password First";
+                      //       }
+                      //       return null;
+                      //     },
+                      //   ),
+                      // ),
+
+                      GetBuilder<PasswordCntroller>(
+                        builder: (pswdController) => TextFormField(
                           controller: _passwordController,
-                          obscureText: value.obsecure,
+                          obscureText: pswdController.isSignUpObscure,
                           decoration: InputDecoration(
                             hintText: "Enter Password",
                             hintStyle: const TextStyle(
@@ -231,7 +282,7 @@ class _SignUpState extends State<SignUp> {
                                 color: Colors.orange,
                               ),
                               onPressed: () {
-                                value.checkMyObsecure();
+                                pswdController.updateSignUpPasswordObscure();
                               },
                             ),
                             focusedBorder: OutlineInputBorder(

@@ -1,4 +1,3 @@
-
 class AddDonationModel {
   late String id;
   late String name;
@@ -7,6 +6,7 @@ class AddDonationModel {
   late String description;
   late String category;
   late String pickUpLocation;
+
   late String donationDescription;
 
   late String attachment;
@@ -20,7 +20,6 @@ class AddDonationModel {
     required this.pickUpLocation,
     required this.donationDescription,
     required this.attachment,
-
   });
 
   String getId() => id;
@@ -43,11 +42,10 @@ class AddDonationModel {
         "pickUpLocation": pickUpLocation,
         "donationDescription": donationDescription,
         "attachment": attachment,
-   
       };
+
   AddDonationModel.fromJson(Map<String, dynamic> json) {
     AddDonationModel(
-   
       id: json['id'],
       name: json['name'],
       title: json["title"],
@@ -57,7 +55,6 @@ class AddDonationModel {
       pickUpLocation: json["pickUpLocation"],
       donationDescription: json["donationDescription"],
       attachment: json["attachment"],
-
     );
   }
 }
