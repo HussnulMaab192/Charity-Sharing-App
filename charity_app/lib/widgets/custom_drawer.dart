@@ -1,4 +1,5 @@
 import 'package:charity_app/Screens/DonorScreens/add_donation.dart';
+import 'package:charity_app/Screens/DonorScreens/view_request.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -31,44 +32,50 @@ Container MyDrawer(BuildContext context) {
             leading: const Icon(Icons.grid_view),
             title: const Text("Donate"),
             onTap: () {
-              Get.defaultDialog(
-                title: "",
-                content: SizedBox(
+              Get.bottomSheet(BottomSheet(
+                onClosing: () {},
+                builder: (context) => SizedBox(
                   width: 150.w,
-                  height: 150.h,
+                  height: 190.h,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DefaultButton(
                           text: "Add Donation",
                           onPressed: () {
-                            Get.to(const AddDonation());
+                            Get.back();
+                            Get.back();
                           }),
                       SizedBox(
                         height: 20.h,
                       ),
-                      DefaultButton(text: "View Request", onPressed: () {}),
+                      DefaultButton(
+                          text: "View Request",
+                          onPressed: () {
+                            Get.off(const ViewRequest());
+                          }),
                     ],
                   ),
                 ),
-                radius: 10.0,
-              );
+              ));
             },
           ),
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text("Request"),
             onTap: () {
-              Get.defaultDialog(
-                title: "",
-                content: SizedBox(
+              Get.bottomSheet(BottomSheet(
+                onClosing: () {},
+                builder: (context) => SizedBox(
                   width: 150.w,
-                  height: 150.h,
+                  height: 190.h,
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DefaultButton(
                           text: "Add Request",
                           onPressed: () {
-                            Get.to(const AddDonation());
+                            Get.back();
                           }),
                       SizedBox(
                         height: 20.h,
@@ -78,8 +85,7 @@ Container MyDrawer(BuildContext context) {
                     ],
                   ),
                 ),
-                radius: 10.0,
-              );
+              ));
             },
           ),
           ListTile(

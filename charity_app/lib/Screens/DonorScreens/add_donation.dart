@@ -96,20 +96,43 @@ class _AddDonationState extends State<AddDonation> {
                         return CustomTable(
                             actions: Row(
                               children: [
-                                Obx(() => 
                                 GestureDetector(
                                   onTap: () async {
-                                    await showAlertDialog(
-                                        context: context, index: index);
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text("My title"),
+                                          content: Text("This is my message."),
+                                          actions: [
+                                            TextButton(
+                                              child: Text("Cancel"),
+                                              onPressed: () {
+                                                Get.back();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text("Delete"),
+                                              onPressed: () async {
+                                                Navigator.of(context).pop();
+                                                await value.list
+                                                    .removeAt(index);
 
-                                    // ignore: use_build_context_synchronously
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content:
-                                                Text("Deleted Scucessfully!")));
+                                                setState(() {});
+
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(const SnackBar(
+                                                        content: Text(
+                                                            "Deleted Scucessfully!")));
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
                                   },
                                   child: const Icon(Icons.delete),
-                                ),),
+                                ),
                                 SizedBox(
                                   width: 6.w,
                                 ),

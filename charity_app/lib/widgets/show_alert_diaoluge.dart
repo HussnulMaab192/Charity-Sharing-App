@@ -16,7 +16,7 @@ showAlertDialog({
   Widget continueButton = TextButton(
     child: const Text("Delete"),
     onPressed: () async {
-      await Get.find<AddMoreList>().list.removeAt(index).obs;
+      await Get.find<AddMoreList>().list.removeAt(index);
       Get.back();
     },
   );

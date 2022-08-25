@@ -15,7 +15,7 @@ class _ViewRequestState extends State<ViewRequest> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     appBar: AppBar(
+      appBar: AppBar(
         title: const Text("View Request"),
         actions: [
           ElevatedButton(
@@ -32,6 +32,5 @@ class _ViewRequestState extends State<ViewRequest> {
         ],
       ),
     );
- 
   }
 }
