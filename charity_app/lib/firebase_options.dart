@@ -44,40 +44,40 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBKqbkrlAJXtXxbdh37CGJJ8-rXBRCQmb4',
-    appId: '1:846923342543:web:c942c3f7fc1b3524fd8dba',
-    messagingSenderId: '846923342543',
-    projectId: 'charity-sharing-app',
-    authDomain: 'charity-sharing-app.firebaseapp.com',
-    storageBucket: 'charity-sharing-app.appspot.com',
-    measurementId: 'G-6G2Y5HPD4H',
+    apiKey: 'AIzaSyAs4b5feDovgs0rZ_MZzrLuk9QQnB-5Fnc',
+    appId: '1:385358109408:web:84839b7bd07fd2e8444e85',
+    messagingSenderId: '385358109408',
+    projectId: 'charity-252d1',
+    authDomain: 'charity-252d1.firebaseapp.com',
+    storageBucket: 'charity-252d1.appspot.com',
+    measurementId: 'G-P9Q3SMZ5CR',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAauEzLgElZvzmJE_t3LRDLeAMmro_kDS8',
-    appId: '1:846923342543:android:413d8209d4cb9fa5fd8dba',
-    messagingSenderId: '846923342543',
-    projectId: 'charity-sharing-app',
-    storageBucket: 'charity-sharing-app.appspot.com',
+    apiKey: 'AIzaSyATIGv7Y260Ty5Ob2uPcO926PpRwUK6F0E',
+    appId: '1:385358109408:android:f6586a80d5dbdc6d444e85',
+    messagingSenderId: '385358109408',
+    projectId: 'charity-252d1',
+    storageBucket: 'charity-252d1.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC_mjpjojPvZPnTwq8R0UkyF56-bLVGeAA',
-    appId: '1:846923342543:ios:f9fedded717ee899fd8dba',
-    messagingSenderId: '846923342543',
-    projectId: 'charity-sharing-app',
-    storageBucket: 'charity-sharing-app.appspot.com',
-    iosClientId: '846923342543-mckg71b75dlompodni3dlpg0mme8gcct.apps.googleusercontent.com',
-    iosBundleId: 'com.example.charity',
+    apiKey: 'AIzaSyBr9a2IRUgCW3N5Y7sFZlmJo4vbzOYRA9k',
+    appId: '1:385358109408:ios:d36e6e86d2e84201444e85',
+    messagingSenderId: '385358109408',
+    projectId: 'charity-252d1',
+    storageBucket: 'charity-252d1.appspot.com',
+    iosClientId: '385358109408-mvbh4m0mr802jpaq0t1nna3f4us7t029.apps.googleusercontent.com',
+    iosBundleId: 'com.example.charityApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC_mjpjojPvZPnTwq8R0UkyF56-bLVGeAA',
-    appId: '1:846923342543:ios:f9fedded717ee899fd8dba',
-    messagingSenderId: '846923342543',
-    projectId: 'charity-sharing-app',
-    storageBucket: 'charity-sharing-app.appspot.com',
-    iosClientId: '846923342543-mckg71b75dlompodni3dlpg0mme8gcct.apps.googleusercontent.com',
-    iosBundleId: 'com.example.charity',
+    apiKey: 'AIzaSyBr9a2IRUgCW3N5Y7sFZlmJo4vbzOYRA9k',
+    appId: '1:385358109408:ios:d36e6e86d2e84201444e85',
+    messagingSenderId: '385358109408',
+    projectId: 'charity-252d1',
+    storageBucket: 'charity-252d1.appspot.com',
+    iosClientId: '385358109408-mvbh4m0mr802jpaq0t1nna3f4us7t029.apps.googleusercontent.com',
+    iosBundleId: 'com.example.charityApp',
   );
 }
