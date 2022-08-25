@@ -1,21 +1,20 @@
 import 'dart:typed_data';
 import 'package:charity_app/Screens/auth_screens/signin_screen.dart';
 import 'package:charity_app/controllers/add_donation_controller.dart';
+import 'package:charity_app/controllers/get_user.dart';
 import 'package:charity_app/controllers/pick_image_controller.dart';
 import 'package:charity_app/services/firebase_auth/firebase_auth.dart';
 import 'package:charity_app/utils/validations/form_field_validation.dart';
 import 'package:charity_app/widgets/tabular_data/custom_table.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
 import '../../services/firebase_methods/firebase_methods.dart';
-
 import '../../widgets/app_logo_text.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/custom_text_field.dart';
 import '../../widgets/default_button.dart';
-import '../../widgets/show_alert_diaoluge.dart';
 
 class AddDonation extends StatefulWidget {
   const AddDonation({Key? key}) : super(key: key);
@@ -26,6 +25,7 @@ class AddDonation extends StatefulWidget {
 //noumana@devnatives.com
 
 class _AddDonationState extends State<AddDonation> {
+  bool isRedBorder = false;
   final _alertFormKey = GlobalKey<FormState>();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _userTitleController = TextEditingController();
@@ -38,11 +38,10 @@ class _AddDonationState extends State<AddDonation> {
   final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
-  final TextEditingController _addItemDescriptionController =
-      TextEditingController();
   bool isUpdate = false;
   Uint8List? image;
   String? showImageMessage;
+
   @override
   Widget build(BuildContext context) {
     Get.put(AddMoreList());
@@ -328,13 +327,14 @@ class _AddDonationState extends State<AddDonation> {
                                             fontFamily: "Rubik Medium",
                                             color: Colors.black),
                                       )
-                                    : Text("image selected!"),
+                                    : const Text("image selected!"),
                               ],
                             ),
                           ),
                         ),
                       );
                     }),
+
                     SizedBox(
                       height: 16.h,
                     ),
@@ -439,8 +439,11 @@ class _AddDonationState extends State<AddDonation> {
                           width: double.maxFinite,
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(16.r),
-                              border:
-                                  Border.all(color: Colors.orange, width: 1)),
+                              border: Border.all(
+                                  color: value.image != null
+                                      ? Colors.orange
+                                      : Colors.red,
+                                  width: 1)),
                           child: Padding(
                             padding: EdgeInsets.symmetric(
                                 vertical: 18.r, horizontal: 8),
@@ -489,29 +492,32 @@ class _AddDonationState extends State<AddDonation> {
                                     onPressed: () {
                                       if (_alertFormKey.currentState!
                                           .validate()) {
-                                        Get.back();
-                                        addList.addToList(
-                                          donationDescription:
-                                              _userDonationDescriptionController
-                                                  .text,
-                                          title: _userTitleController.text,
-                                          itemName: _itemNameController.text,
-                                          quantity: _quantityController.text,
-                                          description:
-                                              _itemDescriptionController.text,
-                                          pickUpLocation:
-                                              _userAddressController.text,
-                                          attachment:
-                                              Get.find<PickImage>().image!,
-                                          category: _categoryController.text,
-                                        );
+                                        if (Get.find<PickImage>().image !=
+                                            null) {
+                                          Get.back();
+                                          addList.addToList(
+                                            donationDescription:
+                                                _userDonationDescriptionController
+                                                    .text,
+                                            title: _userTitleController.text,
+                                            itemName: _itemNameController.text,
+                                            quantity: _quantityController.text,
+                                            description:
+                                                _itemDescriptionController.text,
+                                            pickUpLocation:
+                                                _userAddressController.text,
+                                            attachment:
+                                                Get.find<PickImage>().image!,
+                                            category: _categoryController.text,
+                                          );
 
-                                        _itemNameController.clear();
-                                        _categoryController.clear();
-                                        _quantityController.clear();
-                                        _itemDescriptionController.clear();
-                                        _attachmentController.clear();
-                                        Get.find<PickImage>().clear();
+                                          _itemNameController.clear();
+                                          _categoryController.clear();
+                                          _quantityController.clear();
+                                          _itemDescriptionController.clear();
+                                          _attachmentController.clear();
+                                          Get.find<PickImage>().clear();
+                                        } else {}
                                       }
                                     },
                                   )

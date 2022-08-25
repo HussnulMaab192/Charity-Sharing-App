@@ -1,5 +1,5 @@
-import 'package:charity_app/Screens/DonorScreens/add_donation.dart';
 import 'package:charity_app/Screens/DonorScreens/view_request.dart';
+import 'package:charity_app/controllers/get_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -8,7 +8,7 @@ import '../Screens/auth_screens/signin_screen.dart';
 import '../services/firebase_auth/firebase_auth.dart';
 import '../../widgets/default_button.dart';
 
-Container MyDrawer(BuildContext context) {
+Widget MyDrawer(BuildContext context) {
   return Container(
     width: 250.h,
     child: Drawer(
@@ -17,9 +17,9 @@ Container MyDrawer(BuildContext context) {
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children: <Widget>[
-          const UserAccountsDrawerHeader(
-            accountName: Text("Hussnul Maab"),
-            accountEmail: Text("mabi123@gmail.com"),
+          UserAccountsDrawerHeader(
+            accountName: Text(Get.find<UserController>().data!['name']),
+            accountEmail: Text(Get.find<UserController>().data!['email']),
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.orange,
               child: Text(
