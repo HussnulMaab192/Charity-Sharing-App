@@ -11,7 +11,9 @@ class UserModel {
       required this.email,
       required this.phoneNumber,
       required this.location});
-
+// factory constructor sab say pehly call hoga !
+// UserModel say bhi pehly
+// is say variables ko values assign ho jati hain late modifier add karny ki xroorat ni hai
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         uid: json["uid"],
         name: json["name"],

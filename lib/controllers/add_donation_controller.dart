@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,7 +13,7 @@ class AddMoreList extends GetxController {
     required String donationDescription,
     required String pickUpLocation,
     required String description,
-    required String attachment,
+    required Uint8List attachment,
     required String category,
     // required Uint8List urlOfImg,
   }) {

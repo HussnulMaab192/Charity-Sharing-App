@@ -66,11 +66,20 @@ class _DonationItemsState extends State<DonationItems> {
       key: _formKey,
       child: Column(
         children: [
-          myTextField("Enter title", Icon(Icons.person), _userTitleController),
-          myTextField("Enter Description", Icon(Icons.person),
-              _userDescriptionController),
           myTextField(
-              "Enter Address", Icon(Icons.person), _userAddressController),
+            hintText: "Enter title",
+            preIcon: Icon(Icons.person),
+            mycontroller: _userTitleController,
+          ),
+          myTextField(
+            hintText: "Enter Description",
+            preIcon: Icon(Icons.person),
+            mycontroller: _userDescriptionController,
+          ),
+          myTextField(
+              hintText: "Enter Address",
+              preIcon: Icon(Icons.person),
+              mycontroller: _userAddressController),
           DefaultButton(
               text: "Add Item",
               onPressed: () {

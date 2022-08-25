@@ -1,16 +1,8 @@
 import 'package:charity/Screens/splash_screen.dart';
-import 'package:charity/provider/add_attachment.dart';
-import 'package:charity/provider/expiry_date.dart';
-import 'package:charity/provider/obsecure_pswd.dart';
-import 'package:charity/widgets/customSnakeBar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:provider/provider.dart';
-import 'Screens/DonorScreens/add_donation.dart';
-import 'Screens/auth_screens/signup_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding
@@ -25,48 +17,33 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        // ChangeNotifierProvider(create: (_) => ObsecurePassword()),
-        ChangeNotifierProvider(create: (_) => ExpiryDate()),
-        ChangeNotifierProvider(create: (_) => AddAttachment()),
-      ],
-      child: ScreenUtilInit(
-        designSize: const Size(360, 790),
-        minTextAdapt: true,
-        splitScreenMode: true,
-        builder: (BuildContext context, Widget? child) {
-          return GetMaterialApp(
-            title: 'Flutter Demo',
-            debugShowCheckedModeBanner: false,
-            theme: ThemeData(
-              primaryColor: Colors.white,
-              backgroundColor: Colors.white,
+    return getScreenUtils();
+  }
 
-              primarySwatch: Colors.orange,
-              // see
-            ),
-            home: SplashScreen(),
-          );
-        },
-      ),
+// SCREENUTILL - OF - THE - APPLICATOIN
+  ScreenUtilInit getScreenUtils() {
+    return ScreenUtilInit(
+      designSize: const Size(360, 790),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (BuildContext context, Widget? child) {
+        return GetMaterialApp(
+          title: 'Flutter Demo',
+          debugShowCheckedModeBanner: false,
+          theme: theme(),
+          home: const SplashScreen(),
+        );
+      },
     );
+  }
 
-    //   return ScreenUtilInit(
-    //      designSize: const Size(360, 690),
-    //        minTextAdapt: true,
-    //     splitScreenMode: true,
-    //     builder: (BuildContext context, Widget? child) {
-    //   return MaterialApp(
-
-    //       title: 'Flutter Demo',
-    //       debugShowCheckedModeBanner: false,
-    //       theme: ThemeData(
-
-    //       ),
-    //       home:const SignUp());
-
-    //      },
-    //  );
+// THEME - OF - THE - APPLICATOIN
+  ThemeData theme() {
+    return ThemeData(
+      primaryColor: Colors.white,
+      backgroundColor: Colors.white,
+      primarySwatch: Colors.orange,
+      // see
+    );
   }
 }

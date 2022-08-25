@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 class AddDonationModel {
   late String id;
   late String name;

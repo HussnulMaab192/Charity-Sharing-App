@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
 import '../../Model/add_donation_model.dart';
 
@@ -18,12 +19,13 @@ class FirebsaeMethods {
     required String description,
     required String pickUpLocation,
     required String donationDescription,
-    required String attachment,
-
+    required Uint8List attachment,
   }) async {
     String res = "Some error occured";
     try {
       // creating and initailizing the add donotion model  here
+      String photoUrl = await StorageMethods()
+          .uploadImageToStorage("DonationItemPicture", attachment, false);
       AddDonationModel addDonationModel = AddDonationModel(
         id: FirebaseAuth.instance.currentUser!.uid,
         name: name,
@@ -33,8 +35,7 @@ class FirebsaeMethods {
         description: description,
         pickUpLocation: pickUpLocation,
         donationDescription: donationDescription,
-        attachment: attachment,
-   
+        attachment: photoUrl,
       );
 
       String id = const Uuid().v1();
@@ -50,5 +51,33 @@ class FirebsaeMethods {
       res = e.toString();
     }
     return res;
+  }
+}
+
+class StorageMethods {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  // adding image to firebase storage
+  Future<String> uploadImageToStorage(
+    String childName,
+    Uint8List file,
+    bool ispost,
+  ) async {
+    // creating location to our firebase storage
+
+    Reference ref =
+        _storage.ref().child(childName).child(_auth.currentUser!.uid);
+    // putting in uint8list format -> Upload task like a future but not future
+    if (ispost) {
+      String id = const Uuid().v1();
+      ref = ref.child(id);
+    }
+    UploadTask uploadTask = ref.putData(file);
+
+    TaskSnapshot snapshot = await uploadTask;
+
+    String downloadUrl = await snapshot.ref.getDownloadURL();
+    return downloadUrl;
   }
 }

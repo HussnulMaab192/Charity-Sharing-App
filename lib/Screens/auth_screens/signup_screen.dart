@@ -1,19 +1,15 @@
-import 'package:charity/Screens/DonorScreens/add_donation.dart';
 import 'package:charity/Screens/auth_screens/signin_screen.dart';
 import 'package:charity/controllers/password_controller.dart';
 import 'package:charity/services/firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
-import '../../provider/obsecure_pswd.dart';
+import '../../widgets/custom_text_field.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
-
   @override
   State<SignUp> createState() => _SignUpState();
 }
@@ -58,55 +54,6 @@ class _SignUpState extends State<SignUp> {
       });
       Get.snackbar("Message", res);
     }
-  }
-
-  Widget myTextField(
-      String hintText, Icon preIcon, TextEditingController mycontroller) {
-    return TextFormField(
-      controller: mycontroller,
-      decoration: InputDecoration(
-        hintText: hintText,
-        hintStyle: const TextStyle(
-            fontSize: 16, fontFamily: "Rubik Medium", color: Colors.black),
-        fillColor: Colors.orange,
-        prefixIcon: preIcon,
-        focusedBorder: OutlineInputBorder(
-          borderSide: const BorderSide(
-            color: Colors.orange,
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(35),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(
-            color: Colors.orange,
-          ),
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      validator: ((value) {
-        if (value!.isEmpty) {
-          if (hintText == "Enter Your Name") {
-            return "Enter Your Name Please";
-          }
-          if (hintText == "Enter Mobile number") {
-            return "Enter mobile number ";
-          }
-          if (hintText == "Enter Email") {
-            return "Enter Email Please";
-          }
-          if (hintText == "Enter Password") {
-            return "Enter Password Please";
-          }
-          if (hintText == "Choose location") {
-            return "Choose Location Please";
-          }
-        }
-        return null;
-      }),
-    );
   }
 
   @override
@@ -193,20 +140,24 @@ class _SignUpState extends State<SignUp> {
                       SizedBox(height: 20.h),
 
                       // Enter name field,
-                      myTextField("Enter Your Name", const Icon(Icons.person),
-                          _nameController),
+                      myTextField(
+                          hintText: "Enter Your Name",
+                          preIcon: const Icon(Icons.person),
+                          mycontroller: _nameController),
                       SizedBox(height: 10.h),
 
                       // Enter mobile no
                       myTextField(
-                          "Enter Mobile number",
-                          const Icon(Icons.phone_android),
-                          _mobileNumberController),
+                          hintText: "Enter Mobile number",
+                          preIcon: const Icon(Icons.phone_android),
+                          mycontroller: _mobileNumberController),
                       SizedBox(height: 10.h),
 
                       // Enter email
-                      myTextField("Enter Email", const Icon(Icons.email),
-                          _emailController),
+                      myTextField(
+                          hintText: "Enter Email",
+                          preIcon: const Icon(Icons.email),
+                          mycontroller: _emailController),
                       SizedBox(height: 10.h),
 
                       // Enter Password
@@ -314,9 +265,9 @@ class _SignUpState extends State<SignUp> {
 
                       // choose location
                       myTextField(
-                          "Choose location",
-                          const Icon(Icons.location_city_sharp),
-                          _locationController),
+                          hintText: "Choose location",
+                          preIcon: const Icon(Icons.location_city_sharp),
+                          mycontroller: _locationController),
                     ],
                   ),
                 ),

@@ -1,17 +1,16 @@
-import 'dart:io';
-
-import 'package:charity/Screens/DonorScreens/add_more_items_details.dart';
+import 'dart:typed_data';
 import 'package:charity/Screens/auth_screens/signin_screen.dart';
 import 'package:charity/controllers/add_donation_controller.dart';
+import 'package:charity/controllers/pick_image_controller.dart';
 import 'package:charity/services/firebase_auth/firebase_auth.dart';
+import 'package:charity/utils/validations/form_field_validation.dart';
+import 'package:charity/widgets/tabular_data/custom_table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import '../../provider/add_attachment.dart';
-import '../../provider/obsecure_pswd.dart';
 import '../../services/firebase_methods/firebase_methods.dart';
+import '../../utils/imagepicker.dart';
 import '../../widgets/app_logo_text.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/custom_text_field.dart';
@@ -26,6 +25,7 @@ class AddDonation extends StatefulWidget {
 //noumana@devnatives.com
 
 class _AddDonationState extends State<AddDonation> {
+  final _alertFormKey = GlobalKey<FormState>();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _userTitleController = TextEditingController();
   final TextEditingController _userDonationDescriptionController =
@@ -33,33 +33,20 @@ class _AddDonationState extends State<AddDonation> {
   final TextEditingController _itemDescriptionController =
       TextEditingController();
   final TextEditingController _userAddressController = TextEditingController();
-  final TextEditingController _itemNameController = TextEditingController();
+  final TextEditingController _itemNameController =
+      TextEditingController(text: "Syed Zain Haider Naqvi");
   final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
   final TextEditingController _addItemDescriptionController =
       TextEditingController();
-
+  bool isUpdate = false;
+  Uint8List? image;
+  String? showImageMessage;
   @override
-  File? image;
-
-  Future pickmyImage() async {
-    try {
-      final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) {
-        return;
-      }
-      final imageTemp = File(image.path);
-      setState(() {
-        this.image = imageTemp;
-      });
-    } catch (e) {
-      Get.snackbar("Message", e.toString());
-    }
-  }
-
   Widget build(BuildContext context) {
     Get.put(AddMoreList());
+    Get.put(PickImage());
     // MY-LIST
     return SafeArea(
         child: Scaffold(
@@ -82,9 +69,8 @@ class _AddDonationState extends State<AddDonation> {
       drawer: MyDrawer(context),
       resizeToAvoidBottomInset: false,
       body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
         child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 24.w),
+          margin: EdgeInsets.symmetric(horizontal: 8.w),
           child: Column(
             children: [
               // APP-LOGO APP-TITLE-TEXT
@@ -95,68 +81,49 @@ class _AddDonationState extends State<AddDonation> {
               GetBuilder<AddMoreList>(builder: (value) {
                 return Column(
                   children: [
-                    // SingleChildScrollView(
-                    //   scrollDirection: Axis.horizontal,
-                    //   child: Row(
-                    //     children: [
-                    //       DataTable(columns: const [
-                    //         DataColumn(
-                    //           label: Text('Item Name'),
-                    //         ),
-                    //         DataColumn(
-                    //           label: Text('Quantity'),
-                    //         ),
-                    //         DataColumn(
-                    //           label: Text('Category'),
-                    //         ),
-                    //         DataColumn(
-                    //           label: Text('Action'),
-                    //         ),
-                    //       ], rows: const []),
-                    //     ],
-                    //   ),
-                    // ),
+                    const CustomTable(
+                        actions: Text("Actions"),
+                        category: "Category",
+                        name: "Name",
+                        quantity: "Qty"),
                     ListView.builder(
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       itemCount: value.list.length,
                       itemBuilder: (context, index) {
-                        return Expanded(
-                          child: SingleChildScrollView(
-                            scrollDirection: Axis.horizontal,
-                            child: Row(
+                        return CustomTable(
+                            actions: Row(
                               children: [
-                                DataTable(columns: const [
-                                  DataColumn(label: Text("Name")),
-                                  DataColumn(label: Text("Qty")),
-                                  DataColumn(label: Text("cat")),
-                                  DataColumn(label: Text("Action")),
-                                ], rows: [
-                                  DataRow(cells: [
-                                    DataCell(
-                                      Text("${value.list[index]['itemName']}"),
-                                    ),
-                                    DataCell(
-                                      Text("${value.list[index]['quantity']}"),
-                                    ),
-                                    DataCell(
-                                      Text("${value.list[index]['category']}"),
-                                    ),
-                                    DataCell(
-                                      IconButton(
-                                          onPressed: () {
-                                            setState(() {});
-                                            value.list.removeAt(index);
-                                            Get.snackbar("Message", "Deleted.");
-                                          },
-                                          icon: const Icon(Icons.delete)),
-                                    ),
-                                  ])
-                                ]),
+                                GestureDetector(
+                                  onTap: () async {
+                                    setState(() {
+                                      value.list.removeAt(index);
+                                    });
+
+                                    // ignore: use_build_context_synchronously
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content:
+                                                Text("Deleted Scucessfully!")));
+                                  },
+                                  child: const Icon(Icons.delete),
+                                ),
+                                SizedBox(
+                                  width: 6.w,
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    await newMethod(
+                                      value: index,
+                                    );
+                                  },
+                                  child: const Icon(Icons.edit),
+                                ),
                               ],
                             ),
-                          ),
-                        );
+                            category: value.list[index]['category'],
+                            name: value.list[index]['itemName'],
+                            quantity: value.list[index]['quantity']);
                       },
                     ),
                   ],
@@ -176,155 +143,34 @@ class _AddDonationState extends State<AddDonation> {
         key: _formKey,
         child: Column(
           children: [
-            myTextField("Donation Title", const Icon(Icons.title),
-                _userTitleController),
-            myTextField("Description", const Icon(Icons.description),
-                _userDonationDescriptionController),
             myTextField(
-                "PickUp location",
-                const Icon(Icons.location_city_rounded),
-                _userAddressController),
+              hintText: "Donation Title",
+              preIcon: const Icon(Icons.title),
+              mycontroller: _userTitleController,
+              validator: requiredValidator,
+            ),
+            myTextField(
+              hintText: "Description",
+              preIcon: const Icon(Icons.description),
+              mycontroller: _userDonationDescriptionController,
+              validator: requiredValidator,
+            ),
+            myTextField(
+              hintText: "PickUp location",
+              preIcon: const Icon(Icons.location_city_rounded),
+              mycontroller: _userAddressController,
+              validator: requiredValidator,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 DefaultButton(
                   text: "Add Item",
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      // to open a dialogue box
+                      //
 
-                      Get.defaultDialog(
-                          title: '',
-                          content: Expanded(
-                            flex: 4,
-                            child: SingleChildScrollView(
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    AppLogoText(),
-                                    SizedBox(
-                                      height: 30.0.h,
-                                    ),
-                                    myTextField(
-                                        "Item Name",
-                                        const Icon(Icons.add),
-                                        _itemNameController),
-                                    myTextField(
-                                        "Category",
-                                        const Icon(Icons.category),
-                                        _categoryController),
-                                    myTextField(
-                                        "Quantity",
-                                        const Icon(Icons.numbers),
-                                        _quantityController),
-
-                                    // add attachement
-                                    Consumer<AddAttachment>(
-                                      builder: (context, value, child) =>
-                                          TextFormField(
-                                        controller: value.attachment,
-                                        decoration: InputDecoration(
-                                          hintText: "Attachment",
-                                          hintStyle: const TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: 'Rubik Medium',
-                                              color: Colors.black),
-                                          fillColor: Colors.orange,
-                                          prefixIcon: const Icon(
-                                            Icons.lock,
-                                            color: Colors.orange,
-                                          ),
-                                          // const Icon(Icons.visibility,color: Colors.orange,),
-                                          suffixIcon: IconButton(
-                                            icon: const Icon(
-                                              Icons.file_copy,
-                                              color: Colors.orange,
-                                            ),
-                                            onPressed: () {
-                                              value.addAttachment();
-                                            },
-                                          ),
-                                          focusedBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                              color: Colors.orange,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          border: OutlineInputBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(35),
-                                          ),
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(
-                                              color: Colors.orange,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                        ),
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return "Enter Password First";
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                    myTextField(
-                                        "Description",
-                                        const Icon(Icons.details),
-                                        _itemDescriptionController),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        GetBuilder<AddMoreList>(
-                                          builder: (addList) {
-                                            return DefaultButton(
-                                              text: 'Save',
-                                              onPressed: () {
-                                                addList.addToList(
-                                                  donationDescription:
-                                                      _userDonationDescriptionController
-                                                          .text,
-                                                  title:
-                                                      _userTitleController.text,
-                                                  itemName:
-                                                      _itemNameController.text,
-                                                  quantity:
-                                                      _quantityController.text,
-                                                  description:
-                                                      _itemDescriptionController
-                                                          .text,
-                                                  pickUpLocation:
-                                                      _userAddressController
-                                                          .text,
-                                                  attachment:
-                                                      _attachmentController
-                                                          .text,
-                                                  category:
-                                                      _categoryController.text,
-                                                );
-                                                // NAVIGATING-TO-DETAIL-PAGE
-
-                                                Get.to(const AddDonation());
-                                              },
-                                            );
-                                          },
-                                        ),
-                                        DefaultButton(
-                                            text: 'Cancel', onPressed: () {}),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          radius: 10.0);
+                      await showDiaLog();
                     } else {
                       Get.snackbar("Message", "All Field required.");
                     }
@@ -339,6 +185,14 @@ class _AddDonationState extends State<AddDonation> {
                         text: "Donate",
                         onPressed: () async {
                           await submit();
+                          Get.find<AddMoreList>().list.clear();
+                          _userTitleController.clear();
+                          _userDonationDescriptionController.clear();
+                          _userAddressController.clear();
+                          // ignore: use_build_context_synchronously
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Donated Succesfully!")));
                         },
                       ),
                 value.list.isEmpty
@@ -349,7 +203,12 @@ class _AddDonationState extends State<AddDonation> {
                     : DefaultButton(
                         text: "Cancel",
                         onPressed: () async {
-                          Get.to(const AddDonation());
+                          setState(() {
+                            _userDonationDescriptionController.clear();
+                            _userTitleController.clear();
+                            _userAddressController.clear();
+                            Get.find<AddMoreList>().list.clear();
+                          });
                         },
                       ),
               ],
@@ -358,6 +217,294 @@ class _AddDonationState extends State<AddDonation> {
         ),
       );
     });
+  }
+
+  newMethod({
+    int? value,
+  }) async {
+    final TextEditingController _userItemUpdate = TextEditingController(
+        text: Get.find<AddMoreList>().list[value!]['itemName']);
+    final TextEditingController _userCategoryUpdate = TextEditingController(
+        text: Get.find<AddMoreList>().list[value]['category']);
+    final TextEditingController _userQuantityUpdate = TextEditingController(
+        text: Get.find<AddMoreList>().list[value!]['quantity']);
+
+    final TextEditingController _descUpdate = TextEditingController(
+        text: Get.find<AddMoreList>().list[value]['description']);
+
+    Get.defaultDialog(
+        title: '',
+        content: Expanded(
+          flex: 4,
+          child: SingleChildScrollView(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Form(
+                key: _alertFormKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    AppLogoText(),
+                    SizedBox(
+                      height: 30.0.h,
+                    ),
+                    myTextField(
+                      hintText: "Item Name",
+                      preIcon: const Icon(Icons.add),
+                      mycontroller: _userItemUpdate,
+                      validator: requiredValidator,
+                    ),
+                    myTextField(
+                      hintText: "Category",
+                      preIcon: const Icon(Icons.category),
+                      mycontroller: _userCategoryUpdate,
+                      validator: requiredValidator,
+                    ),
+                    myTextField(
+                      hintText: "Quantity",
+                      preIcon: const Icon(Icons.numbers),
+                      mycontroller: _userQuantityUpdate,
+                      validator: requiredValidator,
+                    ),
+
+                    // add attachement
+                    GetBuilder<PickImage>(builder: (value) {
+                      return GestureDetector(
+                        onTap: () async {
+                          await value.pickmyImage();
+                        },
+                        child: Container(
+                          width: double.maxFinite,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.r),
+                              border:
+                                  Border.all(color: Colors.orange, width: 1)),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 18.r, horizontal: 8),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.attach_file,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(
+                                  width: 8.w,
+                                ),
+                                value.image == null
+                                    ? const Text(
+                                        "Add attachment ",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: "Rubik Medium",
+                                            color: Colors.black),
+                                      )
+                                    : Text("image selected!"),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                    SizedBox(
+                      height: 16.h,
+                    ),
+                    myTextField(
+                      hintText: "Description",
+                      preIcon: const Icon(Icons.details),
+                      mycontroller: _descUpdate,
+                      validator: requiredValidator,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        GetBuilder<AddMoreList>(
+                          builder: (addList) {
+                            return DefaultButton(
+                              text: 'Update',
+                              onPressed: () {
+                                if (_alertFormKey.currentState!.validate()) {
+                                  Get.back();
+
+                                  Get.find<AddMoreList>().list[value]["title"] =
+                                      _userTitleController.text;
+                                  Get.find<AddMoreList>().list[value]
+                                      ["itemName"] = _userItemUpdate.text;
+                                  Get.find<AddMoreList>().list[value]
+                                      ["category"] = _userCategoryUpdate.text;
+                                  Get.find<AddMoreList>().list[value]
+                                      ["quantity"] = _userQuantityUpdate.text;
+                                  Get.find<AddMoreList>().list[value]
+                                      ["description"] = _descUpdate.text;
+
+                                  _itemNameController.clear();
+                                  _categoryController.clear();
+                                  _quantityController.clear();
+                                  _itemDescriptionController.clear();
+                                  _attachmentController.clear();
+                                  Get.find<PickImage>().clear();
+                                }
+                              },
+                            );
+                          },
+                        ),
+                        DefaultButton(
+                            text: 'Cancel',
+                            onPressed: () {
+                              Get.back();
+                            }),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        radius: 10.0);
+  }
+
+  showDiaLog() async {
+    Get.defaultDialog(
+        title: '',
+        content: Expanded(
+          flex: 4,
+          child: SingleChildScrollView(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Form(
+                key: _alertFormKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    AppLogoText(),
+                    SizedBox(
+                      height: 30.0.h,
+                    ),
+                    myTextField(
+                      hintText: "Item Name",
+                      preIcon: const Icon(Icons.add),
+                      mycontroller: _itemNameController,
+                      validator: requiredValidator,
+                    ),
+                    myTextField(
+                      hintText: "Category",
+                      preIcon: const Icon(Icons.category),
+                      mycontroller: _categoryController,
+                      validator: requiredValidator,
+                    ),
+                    myTextField(
+                      hintText: "Quantity",
+                      preIcon: const Icon(Icons.numbers),
+                      mycontroller: _quantityController,
+                      validator: requiredValidator,
+                    ),
+
+                    // add attachement
+                    GetBuilder<PickImage>(builder: (value) {
+                      return GestureDetector(
+                        onTap: () async {
+                          await value.pickmyImage();
+                        },
+                        child: Container(
+                          width: double.maxFinite,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16.r),
+                              border:
+                                  Border.all(color: Colors.orange, width: 1)),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 18.r, horizontal: 8),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.attach_file,
+                                  color: Colors.grey,
+                                ),
+                                SizedBox(
+                                  width: 8.w,
+                                ),
+                                value.image == null
+                                    ? const Text(
+                                        "Add attachment ",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: "Rubik Medium",
+                                            color: Colors.black),
+                                      )
+                                    : Text("image selected!"),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
+                    SizedBox(
+                      height: 16.h,
+                    ),
+                    myTextField(
+                      hintText: "Description",
+                      preIcon: const Icon(Icons.details),
+                      mycontroller: _itemDescriptionController,
+                      validator: requiredValidator,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        GetBuilder<AddMoreList>(
+                          builder: (addList) {
+                            return isUpdate == false
+                                ? DefaultButton(
+                                    text: 'Save',
+                                    onPressed: () {
+                                      if (_alertFormKey.currentState!
+                                          .validate()) {
+                                        Get.back();
+                                        addList.addToList(
+                                          donationDescription:
+                                              _userDonationDescriptionController
+                                                  .text,
+                                          title: _userTitleController.text,
+                                          itemName: _itemNameController.text,
+                                          quantity: _quantityController.text,
+                                          description:
+                                              _itemDescriptionController.text,
+                                          pickUpLocation:
+                                              _userAddressController.text,
+                                          attachment:
+                                              Get.find<PickImage>().image!,
+                                          category: _categoryController.text,
+                                        );
+
+                                        _itemNameController.clear();
+                                        _categoryController.clear();
+                                        _quantityController.clear();
+                                        _itemDescriptionController.clear();
+                                        _attachmentController.clear();
+                                        Get.find<PickImage>().clear();
+                                      }
+                                    },
+                                  )
+                                : DefaultButton(
+                                    text: "Update", onPressed: () {});
+                          },
+                        ),
+                        DefaultButton(
+                            text: 'Cancel',
+                            onPressed: () {
+                              Get.back();
+                            }),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        radius: 10.0);
   }
 
   FirebsaeMethods firebsaeMethods = FirebsaeMethods();
@@ -370,7 +517,7 @@ class _AddDonationState extends State<AddDonation> {
     for (var i = 0; i < Get.find<AddMoreList>().list.length; i++) {
       String res = await firebsaeMethods.addDonation(
         title: Get.find<AddMoreList>().list[i]['title'],
-        name: Get.find<AddMoreList>().list[i]['name'],
+        name: Get.find<AddMoreList>().list[i]['itemName'],
         quantity: Get.find<AddMoreList>().list[i]['quantity'],
         description: Get.find<AddMoreList>().list[i]['description'],
         category: Get.find<AddMoreList>().list[i]['category'],
