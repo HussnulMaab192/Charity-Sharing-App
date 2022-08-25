@@ -96,12 +96,12 @@ class _AddDonationState extends State<AddDonation> {
                         return CustomTable(
                             actions: Row(
                               children: [
+                                Obx(() => 
                                 GestureDetector(
                                   onTap: () async {
-                                    setState(() async {
-                                      await showAlertDialog(
-                                          context: context, index: index);
-                                    });
+                                    await showAlertDialog(
+                                        context: context, index: index);
+
                                     // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
@@ -109,7 +109,7 @@ class _AddDonationState extends State<AddDonation> {
                                                 Text("Deleted Scucessfully!")));
                                   },
                                   child: const Icon(Icons.delete),
-                                ),
+                                ),),
                                 SizedBox(
                                   width: 6.w,
                                 ),
@@ -232,7 +232,7 @@ class _AddDonationState extends State<AddDonation> {
     final TextEditingController _userCategoryUpdate = TextEditingController(
         text: Get.find<AddMoreList>().list[value]['category']);
     final TextEditingController _userQuantityUpdate = TextEditingController(
-        text: Get.find<AddMoreList>().list[value!]['quantity']);
+        text: Get.find<AddMoreList>().list[value]['quantity']);
 
     final TextEditingController _descUpdate = TextEditingController(
         text: Get.find<AddMoreList>().list[value]['description']);
