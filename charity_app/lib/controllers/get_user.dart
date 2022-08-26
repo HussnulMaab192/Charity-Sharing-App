@@ -3,13 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class UserController extends GetxController {
-  @override
-  void onReady() {
-    // TODO: implement onReady
-    super.onReady();
-    getmyUser();
-  }
-
   final FirebaseFirestore _store = FirebaseFirestore.instance;
   DocumentSnapshot? data;
 
@@ -20,7 +13,7 @@ class UserController extends GetxController {
         .get();
 
     data = myUser;
-
+    print("The data is " + data!['name'].toString());
     update();
   }
 }

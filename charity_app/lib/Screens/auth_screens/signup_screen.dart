@@ -1,11 +1,14 @@
 import 'package:charity_app/Screens/auth_screens/signin_screen.dart';
 import 'package:charity_app/controllers/password_controller.dart';
 import 'package:charity_app/services/firebase_auth/firebase_auth.dart';
+import 'package:charity_app/utils/validations/form_field_validation.dart';
+import 'package:charity_app/widgets/app_logo_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../constaints.dart';
 import '../../widgets/custom_text_field.dart';
 
 class SignUp extends StatefulWidget {
@@ -44,8 +47,8 @@ class _SignUpState extends State<SignUp> {
       setState(() {
         isLoading = true;
       });
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Please verify Your Email")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please verify Your Email")));
       Get.off(const SignIn());
     } else {
       setState(() {
@@ -68,67 +71,7 @@ class _SignUpState extends State<SignUp> {
               SizedBox(
                 height: 30.h,
               ),
-              // logo + app name
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image(
-                    height: 50.h,
-                    image: const AssetImage("assets/logo/donateLogo.jpg"),
-                  ),
-                  SizedBox(
-                    width: 10.h,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Charity Sharing",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontFamily: 'Rubik Medium',
-                            color: Colors.black),
-                      ),
-                      Text(
-                        "App",
-                        style: TextStyle(
-                            fontSize: 24,
-                            fontFamily: 'Rubik Medium',
-                            color: Colors.orange),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-
-              SizedBox(
-                height: 20.h,
-              ),
-              // Sign Up Text
-              const Center(
-                  child: Text(
-                "Sign Up",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'Rubik Medium',
-                    color: Colors.black),
-              )),
-
-              SizedBox(
-                height: 14.h,
-              ),
-              // quote text
-              const Center(
-                  child: Text(
-                "Feeding some one is the highest \nReward you can give to humanity",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: 'Rubik Regular',
-                    color: Colors.orange),
-              )),
+              AppLogoText(title: "Sign Up"),
 
               // text Fields
               Padding(
@@ -143,121 +86,40 @@ class _SignUpState extends State<SignUp> {
                       myTextField(
                           hintText: "Enter Your Name",
                           preIcon: Icons.person,
-                          mycontroller: _nameController),
+                          mycontroller: _nameController,
+                          validator: requiredValidator),
+
                       SizedBox(height: 10.h),
 
                       // Enter mobile no
                       myTextField(
-                          hintText: "Enter Mobile number",
-                          preIcon: Icons.phone_android,
-                          mycontroller: _mobileNumberController),
+                        hintText: "Enter Mobile number",
+                        preIcon: Icons.phone_android,
+                        mycontroller: _mobileNumberController,
+                        validator: requiredValidator,
+                      ),
                       SizedBox(height: 10.h),
 
                       // Enter email
                       myTextField(
-                          hintText: "Enter Email",
-                          preIcon: Icons.email,
-                          mycontroller: _emailController),
+                        hintText: "Enter Email",
+                        preIcon: Icons.email,
+                        mycontroller: _emailController,
+                        validator: requiredValidator,
+                      ),
                       SizedBox(height: 10.h),
 
-                      // Enter Password
-                      // Consumer<ObsecurePassword>(
-                      //   builder: (context, value, child) => TextFormField(
-                      //     controller: _passwordController,
-                      //     obscureText: value.obsecure,
-                      //     decoration: InputDecoration(
-                      //       hintText: "Enter Password",
-                      //       hintStyle: const TextStyle(
-                      //           fontSize: 16,
-                      //           fontFamily: 'Rubik Medium',
-                      //           color: Colors.black),
-                      //       fillColor: Colors.orange,
-                      //       prefixIcon:
-                      //         Icons.lock,
-                      //         color: Colors.orange,
-                      //       ),
-                      //       // const Icon(Icons.visibility,color: Colors.orange,),
-                      //       suffixIcon: IconButton(
-                      //         icon: const Icon(
-                      //           Icons.visibility,
-                      //           color: Colors.orange,
-                      //         ),
-                      //         onPressed: () {
-                      //           value.checkMyObsecure();
-                      //         },
-                      //       ),
-                      //       focusedBorder: OutlineInputBorder(
-                      //         borderSide: const BorderSide(
-                      //           color: Colors.orange,
-                      //         ),
-                      //         borderRadius: BorderRadius.circular(20),
-                      //       ),
-                      //       border: OutlineInputBorder(
-                      //         borderRadius: BorderRadius.circular(35),
-                      //       ),
-                      //       enabledBorder: OutlineInputBorder(
-                      //         borderSide: const BorderSide(
-                      //           color: Colors.orange,
-                      //         ),
-                      //         borderRadius: BorderRadius.circular(20),
-                      //       ),
-                      //     ),
-                      //     validator: (value) {
-                      //       if (value!.isEmpty) {
-                      //         return "Enter Password First";
-                      //       }
-                      //       return null;
-                      //     },
-                      //   ),
-                      // ),
-
                       GetBuilder<PasswordCntroller>(
-                        builder: (pswdController) => TextFormField(
-                          controller: _passwordController,
-                          obscureText: pswdController.isSignUpObscure,
-                          decoration: InputDecoration(
-                            hintText: "Enter Password",
-                            hintStyle: const TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'Rubik Medium',
-                                color: Colors.black),
-                            fillColor: Colors.orange,
-                            prefixIcon: const Icon(
-                              Icons.lock,
-                              color: Colors.orange,
-                            ),
-                            // const Icon(Icons.visibility,color: Colors.orange,),
-                            suffixIcon: IconButton(
-                              icon: const Icon(
-                                Icons.visibility,
-                                color: Colors.orange,
-                              ),
-                              onPressed: () {
-                                pswdController.updateSignUpPasswordObscure();
-                              },
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Colors.orange,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(35),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Colors.orange,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Enter Password First";
-                            }
-                            return null;
-                          },
+                        builder: (pswdController) => myTextField(
+                          validator: passwordValidator,
+                          isObsecure: pswdController.isSignUpObscure,
+                          hintText: "Enter Password",
+                          preIcon: Icons.lock,
+                          mycontroller: _passwordController,
+                          suffixIcon: pswdController.isSignUpObscure
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          onTap: pswdController.updateSignUpPasswordObscure,
                         ),
                       ),
 
@@ -265,9 +127,11 @@ class _SignUpState extends State<SignUp> {
 
                       // choose location
                       myTextField(
-                          hintText: "Choose location",
-                          preIcon: Icons.location_city_sharp,
-                          mycontroller: _locationController),
+                        hintText: "Choose location",
+                        preIcon: Icons.location_city_sharp,
+                        mycontroller: _locationController,
+                        validator: requiredValidator,
+                      ),
                     ],
                   ),
                 ),
@@ -285,22 +149,29 @@ class _SignUpState extends State<SignUp> {
                   ? const Center(
                       child: CupertinoActivityIndicator(),
                     )
-                  : InkWell(
-                      onTap: () {
-                        if (formKey.currentState!.validate()) {
-                          registerUser();
-                        } else {
-                          return;
-                        }
-                      },
-                      child: Container(
-                        height: 30.h,
-                        width: 100.w,
-                        decoration: BoxDecoration(
-                            color: Colors.orange,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: const Center(
-                          child: Text("SignUp"),
+                  : Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.r),
+                      child: InkWell(
+                        onTap: () {
+                          if (formKey.currentState!.validate()) {
+                            registerUser();
+                          } else {
+                            return;
+                          }
+                        },
+                        child: Container(
+                          width: double.maxFinite,
+                          decoration: BoxDecoration(
+                              color: Get.isDarkMode
+                                  ? Colors.teal
+                                  : primaryLightClr,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0.r),
+                              child: const Text("SignUp"),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -312,12 +183,15 @@ class _SignUpState extends State<SignUp> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     "Already have an Account ?",
                     style: TextStyle(
                         fontSize: 16,
                         fontFamily: 'Rubik Regular',
-                        color: Colors.black),
+                        color: Get.isDarkMode ? Colors.white : Colors.black),
+                  ),
+                  SizedBox(
+                    width: 10.h,
                   ),
                   InkWell(
                     onTap: () {
@@ -326,17 +200,21 @@ class _SignUpState extends State<SignUp> {
                           MaterialPageRoute(
                               builder: (context) => const SignIn()));
                     },
-                    child: const Text(
+                    child: Text(
                       "Login",
                       style: TextStyle(
                           decoration: TextDecoration.underline,
                           fontSize: 16,
                           fontFamily: 'Rubik Medium',
-                          color: Colors.orange),
+                          color:
+                              Get.isDarkMode ? Colors.teal : primaryLightClr),
                     ),
                   ),
                 ],
               ),
+              SizedBox(
+                height: 20.h,
+              )
             ],
           ),
         ),

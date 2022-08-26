@@ -5,6 +5,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 Widget myTextField({
+  VoidCallback? onTap,
+  IconData? suffixIcon,
+  bool? isObsecure,
   required String hintText,
   required IconData preIcon,
   required TextEditingController mycontroller,
@@ -13,10 +16,18 @@ Widget myTextField({
   return Column(
     children: [
       TextFormField(
+        obscureText: isObsecure ?? false,
         controller: mycontroller,
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: textInputStyle,
+          suffixIcon: GestureDetector(
+            onTap: onTap,
+            child: Icon(
+              suffixIcon,
+              color: Get.isDarkMode ? Colors.teal : primaryLightClr,
+            ),
+          ),
           prefixIcon: Icon(
             preIcon,
             color: Get.isDarkMode ? Colors.teal : primaryLightClr,

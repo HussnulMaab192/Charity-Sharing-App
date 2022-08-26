@@ -1,15 +1,18 @@
 import 'package:charity_app/Screens/auth_screens/signup_screen.dart';
+import 'package:charity_app/Screens/forget_pswd.dart';
+import 'package:charity_app/constaints.dart';
+import 'package:charity_app/utils/validations/form_field_validation.dart';
+import 'package:charity_app/widgets/custom_text_field.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../../controllers/get_user.dart';
 import '../../controllers/password_controller.dart';
 import '../../services/firebase_auth/firebase_auth.dart';
 import '../../widgets/app_logo_text.dart';
-
 import '../DonorScreens/add_donation.dart';
-import '../forget_pswd.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -36,6 +39,7 @@ class _SignInState extends State<SignIn> {
       });
       Get.snackbar("Message", "Successfully loged in.");
       // ignore: use_build_context_synchronously
+      await Get.find<UserController>().getmyUser();
       Get.offAll(const AddDonation());
       _emailController.clear();
       _paswordControler.clear();
@@ -80,58 +84,24 @@ class _SignInState extends State<SignIn> {
                   child: Column(
                     children: [
                       // Enter email
-                      myTextField("Enter Email", const Icon(Icons.email),
-                          _emailController),
+                      myTextField(
+                          hintText: "Enter Email",
+                          preIcon: Icons.email,
+                          mycontroller: _emailController),
 
                       SizedBox(height: 10.h),
 
                       GetBuilder<PasswordCntroller>(
-                        builder: (pswdController) => TextFormField(
-                          controller: _paswordControler,
-                          obscureText: pswdController.isSignInObscure,
-                          decoration: InputDecoration(
-                            hintText: "Enter Password",
-                            hintStyle: const TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'Rubik Medium',
-                                color: Colors.black),
-                            fillColor: Colors.orange,
-                            prefixIcon: const Icon(
-                              Icons.lock,
-                              color: Colors.orange,
-                            ),
-                            // const Icon(Icons.visibility,color: Colors.orange,),
-                            suffixIcon: IconButton(
-                              icon: const Icon(
-                                Icons.visibility,
-                                color: Colors.orange,
-                              ),
-                              onPressed: () {
-                                pswdController.updateSignInPasswordObscure();
-                              },
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Colors.orange,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(35),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                color: Colors.orange,
-                              ),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                          ),
-                          validator: (value) {
-                            if (value!.isEmpty) {
-                              return "Enter Password First";
-                            }
-                            return null;
-                          },
+                        builder: (pswdController) => myTextField(
+                          validator: passwordValidator,
+                          isObsecure: pswdController.isSignInObscure,
+                          hintText: "Enter Password",
+                          preIcon: Icons.lock,
+                          mycontroller: _paswordControler,
+                          suffixIcon: pswdController.isSignInObscure
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                          onTap: pswdController.updateSignInPasswordObscure,
                         ),
                       ),
                       SizedBox(
@@ -172,22 +142,31 @@ class _SignInState extends State<SignIn> {
                   ? const Center(
                       child: CupertinoActivityIndicator(),
                     )
-                  : InkWell(
-                      onTap: () async {
-                        if ((formKey.currentState!.validate())) {
-                          await signInUser();
-                        } else {
-                          return;
-                        }
-                      },
-                      child: Container(
-                        height: 30.h,
-                        width: 100.w,
-                        decoration: BoxDecoration(
-                            color: Colors.orange,
-                            borderRadius: BorderRadius.circular(20)),
-                        child: const Center(
-                          child: Text("Sign In"),
+                  : Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.0.w,
+                      ),
+                      child: InkWell(
+                        onTap: () async {
+                          if ((formKey.currentState!.validate())) {
+                            await signInUser();
+                          } else {
+                            return;
+                          }
+                        },
+                        child: Container(
+                          width: double.maxFinite,
+                          decoration: BoxDecoration(
+                              color: Get.isDarkMode
+                                  ? Colors.teal
+                                  : primaryLightClr,
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(16.0.r),
+                              child: Text("Sign In"),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -199,12 +178,15 @@ class _SignInState extends State<SignIn> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
+                  Text(
                     "Don't have an Account ?",
                     style: TextStyle(
                         fontSize: 16,
                         fontFamily: 'Rubik Regular',
-                        color: Colors.black),
+                        color: Get.isDarkMode ? Colors.white : Colors.black),
+                  ),
+                  SizedBox(
+                    width: 10.w,
                   ),
                   InkWell(
                     onTap: () {
@@ -213,13 +195,14 @@ class _SignInState extends State<SignIn> {
                           MaterialPageRoute(
                               builder: (context) => const SignUp()));
                     },
-                    child: const Text(
+                    child: Text(
                       "Sign Up",
                       style: TextStyle(
                           decoration: TextDecoration.underline,
                           fontSize: 16,
                           fontFamily: 'Rubik Medium',
-                          color: Colors.orange),
+                          color:
+                              Get.isDarkMode ? Colors.teal : primaryLightClr),
                     ),
                   ),
                 ],

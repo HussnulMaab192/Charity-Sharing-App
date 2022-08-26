@@ -1,6 +1,7 @@
 import 'package:charity_app/Screens/auth_screens/signin_screen.dart';
 import 'package:charity_app/services/firebase_auth/firebase_auth.dart';
 import 'package:charity_app/widgets/app_logo_text.dart';
+import 'package:charity_app/widgets/custom_text_field.dart';
 import 'package:charity_app/widgets/default_button.dart';
 import 'package:flutter/material.dart';
 
@@ -12,43 +13,6 @@ class ForgetPassword extends StatefulWidget {
 
   @override
   State<ForgetPassword> createState() => _ForgetPasswordState();
-}
-
-Widget myTextField(
-    String hintText, Icon preIcon, TextEditingController mycontroller) {
-  return TextFormField(
-    controller: mycontroller,
-    decoration: InputDecoration(
-      hintText: hintText,
-      hintStyle: const TextStyle(
-          fontSize: 16, fontFamily: "Rubik Medium", color: Colors.black),
-      fillColor: Colors.orange,
-      prefixIcon: preIcon,
-      focusedBorder: OutlineInputBorder(
-        borderSide: const BorderSide(
-          color: Colors.orange,
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(35),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(
-          color: Colors.orange,
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-    ),
-    validator: ((value) {
-      if (value!.isEmpty) {
-        if (hintText == "Enter Email") {
-          return "Enter Email Please";
-        }
-      }
-      return null;
-    }),
-  );
 }
 
 class _ForgetPasswordState extends State<ForgetPassword> {
@@ -64,7 +28,9 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           children: [
             AppLogoText(title: "Forgot Password"),
             myTextField(
-                "Enter your Email", const Icon(Icons.email), _emailController),
+                hintText: "Enter your Email",
+                preIcon: Icons.email,
+                mycontroller: _emailController),
             SizedBox(height: 8.h),
             SizedBox(
               width: double.maxFinite,

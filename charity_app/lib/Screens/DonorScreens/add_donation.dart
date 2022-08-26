@@ -10,6 +10,7 @@ import 'package:charity_app/widgets/tabular_data/custom_table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../controllers/get_user.dart';
 import '../../services/firebase_methods/firebase_methods.dart';
 import '../../theme.dart';
 import '../../widgets/app_logo_text.dart';
@@ -26,7 +27,6 @@ class AddDonation extends StatefulWidget {
 //noumana@devnatives.com
 
 class _AddDonationState extends State<AddDonation> {
-  bool isRedBorder = false;
   final _alertFormKey = GlobalKey<FormState>();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _userTitleController = TextEditingController();

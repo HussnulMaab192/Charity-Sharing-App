@@ -21,8 +21,9 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> chkLogin() async {
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(Duration(seconds: 1));
     if (FirebaseAuth.instance.currentUser != null) {
+      await Get.find<UserController>().getmyUser();
       Get.off(AddDonation());
     } else {
       Get.off(SignIn());
