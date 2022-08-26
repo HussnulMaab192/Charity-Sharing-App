@@ -1,4 +1,5 @@
 import 'package:charity_app/Screens/splash_screen.dart';
+import 'package:charity_app/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -31,20 +32,12 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           title: 'Flutter Demo',
           debugShowCheckedModeBanner: false,
-          theme: theme(),
+          themeMode: ThemeMode.light,
+          darkTheme: Themes.dark,
+          theme: Themes.light,
           home: const SplashScreen(),
         );
       },
-    );
-  }
-
-// THEME - OF - THE - APPLICATOIN
-  ThemeData theme() {
-    return ThemeData(
-      primaryColor: Colors.white,
-      backgroundColor: Colors.white,
-      primarySwatch: Colors.orange,
-      // see
     );
   }
 }

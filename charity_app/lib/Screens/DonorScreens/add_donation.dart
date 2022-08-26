@@ -1,16 +1,17 @@
 import 'dart:typed_data';
 import 'package:charity_app/Screens/auth_screens/signin_screen.dart';
+import 'package:charity_app/constaints.dart';
 import 'package:charity_app/controllers/add_donation_controller.dart';
-import 'package:charity_app/controllers/get_user.dart';
 import 'package:charity_app/controllers/pick_image_controller.dart';
 import 'package:charity_app/services/firebase_auth/firebase_auth.dart';
+import 'package:charity_app/utils/imagepicker.dart';
 import 'package:charity_app/utils/validations/form_field_validation.dart';
 import 'package:charity_app/widgets/tabular_data/custom_table.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../services/firebase_methods/firebase_methods.dart';
+import '../../theme.dart';
 import '../../widgets/app_logo_text.dart';
 import '../../widgets/custom_drawer.dart';
 import '../../widgets/custom_text_field.dart';
@@ -41,7 +42,7 @@ class _AddDonationState extends State<AddDonation> {
   bool isUpdate = false;
   Uint8List? image;
   String? showImageMessage;
-
+  bool isPicked = true;
   @override
   Widget build(BuildContext context) {
     Get.put(AddMoreList());
@@ -49,10 +50,18 @@ class _AddDonationState extends State<AddDonation> {
     // MY-LIST
     return SafeArea(
         child: Scaffold(
+      backgroundColor: Get.isDarkMode ? primaryDarkClr : Colors.white,
       appBar: AppBar(
-        title: const Text("Add Doantion"),
+        backgroundColor: Get.isDarkMode ? primaryDarkBorderClr : Colors.orange,
+        title: const Text(
+          "Add Doantion",
+          style: TextStyle(),
+        ),
         actions: [
           ElevatedButton(
+              style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      Get.isDarkMode ? primaryDarkBorderClr : primaryLightClr)),
               onPressed: () async {
                 Firebaseauth firebaseauth = Firebaseauth();
                 String res = await firebaseauth.signOut();
@@ -81,13 +90,21 @@ class _AddDonationState extends State<AddDonation> {
                 return Column(
                   children: [
                     value.list.isNotEmpty
-                        ? const CustomTable(
-                            actions: Text("Actions"),
+                        ? CustomTable(
+                            isHeader: true,
+                            actions: Text(
+                              "Actions",
+                              style: TextStyle(
+                                  color: Get.isDarkMode
+                                      ? Colors.teal
+                                      : primaryLightClr),
+                            ),
                             category: "Category",
                             name: "Name",
                             quantity: "Qty")
                         : SizedBox(),
                     ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       scrollDirection: Axis.vertical,
                       itemCount: value.list.length,
@@ -133,7 +150,7 @@ class _AddDonationState extends State<AddDonation> {
                                   child: const Icon(Icons.delete),
                                 ),
                                 SizedBox(
-                                  width: 6.w,
+                                  width: 2.w,
                                 ),
                                 GestureDetector(
                                   onTap: () async {
@@ -169,19 +186,19 @@ class _AddDonationState extends State<AddDonation> {
           children: [
             myTextField(
               hintText: "Donation Title",
-              preIcon: const Icon(Icons.title),
+              preIcon: Icons.title,
               mycontroller: _userTitleController,
               validator: requiredValidator,
             ),
             myTextField(
               hintText: "Description",
-              preIcon: const Icon(Icons.description),
+              preIcon: Icons.description,
               mycontroller: _userDonationDescriptionController,
               validator: requiredValidator,
             ),
             myTextField(
               hintText: "PickUp location",
-              preIcon: const Icon(Icons.location_city_rounded),
+              preIcon: Icons.location_city_rounded,
               mycontroller: _userAddressController,
               validator: requiredValidator,
             ),
@@ -211,15 +228,6 @@ class _AddDonationState extends State<AddDonation> {
                             text: "Donate",
                             onPressed: () async {
                               await submit();
-
-                              Get.find<AddMoreList>().list.clear();
-                              _userTitleController.clear();
-                              _userDonationDescriptionController.clear();
-                              _userAddressController.clear();
-                              // ignore: use_build_context_synchronously
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text("Donated Succesfully!")));
                             },
                           ),
                 value.list.isEmpty
@@ -277,19 +285,19 @@ class _AddDonationState extends State<AddDonation> {
                     ),
                     myTextField(
                       hintText: "Item Name",
-                      preIcon: const Icon(Icons.add),
+                      preIcon: Icons.add,
                       mycontroller: _userItemUpdate,
                       validator: requiredValidator,
                     ),
                     myTextField(
                       hintText: "Category",
-                      preIcon: const Icon(Icons.category),
+                      preIcon: Icons.category,
                       mycontroller: _userCategoryUpdate,
                       validator: requiredValidator,
                     ),
                     myTextField(
                       hintText: "Quantity",
-                      preIcon: const Icon(Icons.numbers),
+                      preIcon: Icons.numbers,
                       mycontroller: _userQuantityUpdate,
                       validator: requiredValidator,
                     ),
@@ -323,9 +331,9 @@ class _AddDonationState extends State<AddDonation> {
                                         "Add attachment ",
                                         overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: "Rubik Medium",
-                                            color: Colors.black),
+                                          fontSize: 16,
+                                          fontFamily: "Rubik Medium",
+                                        ),
                                       )
                                     : const Text("image selected!"),
                               ],
@@ -340,7 +348,7 @@ class _AddDonationState extends State<AddDonation> {
                     ),
                     myTextField(
                       hintText: "Description",
-                      preIcon: const Icon(Icons.details),
+                      preIcon: Icons.details,
                       mycontroller: _descUpdate,
                       validator: requiredValidator,
                     ),
@@ -412,72 +420,106 @@ class _AddDonationState extends State<AddDonation> {
                     ),
                     myTextField(
                       hintText: "Item Name",
-                      preIcon: const Icon(Icons.add),
+                      preIcon: Icons.add,
                       mycontroller: _itemNameController,
                       validator: requiredValidator,
                     ),
                     myTextField(
                       hintText: "Category",
-                      preIcon: const Icon(Icons.category),
+                      preIcon: Icons.category,
                       mycontroller: _categoryController,
                       validator: requiredValidator,
                     ),
                     myTextField(
                       hintText: "Quantity",
-                      preIcon: const Icon(Icons.numbers),
+                      preIcon: Icons.numbers,
                       mycontroller: _quantityController,
                       validator: requiredValidator,
                     ),
 
                     // add attachement
                     GetBuilder<PickImage>(builder: (value) {
-                      return GestureDetector(
-                        onTap: () async {
-                          await value.pickmyImage();
-                        },
-                        child: Container(
-                          width: double.maxFinite,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.r),
-                              border: Border.all(
-                                  color: value.image != null
-                                      ? Colors.orange
-                                      : Colors.red,
-                                  width: 1)),
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                vertical: 18.r, horizontal: 8),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.attach_file,
-                                  color: Colors.grey,
-                                ),
-                                SizedBox(
-                                  width: 8.w,
-                                ),
-                                value.image == null
-                                    ? const Text(
-                                        "Add attachment ",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontSize: 16,
-                                            fontFamily: "Rubik Medium",
-                                            color: Colors.black),
-                                      )
-                                    : Text("image selected!"),
-                              ],
+                      return TextFormField(
+                        controller: _attachmentController,
+                        readOnly: true,
+                        decoration: InputDecoration(
+                          hintText: "Add Attachment",
+                          hintStyle: textInputStyle,
+                          prefixIcon: GestureDetector(
+                            onTap: () async {
+                              await value.pickmyImage();
+                              _attachmentController.text = "Image is Selected";
+                            },
+                            child: Icon(
+                              Icons.attach_file,
+                              color: Get.isDarkMode
+                                  ? Colors.teal
+                                  : primaryLightClr,
                             ),
                           ),
+                          focusedBorder: outlineBorder(),
+                          enabledBorder: outlineBorder(),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(35),
+                          ),
                         ),
+                        validator: requiredValidator,
                       );
                     }),
+                    // IF - IMAGE - IS - NULL
+                    // GetBuilder<PickImage>(builder: (value) {
+                    //   return GestureDetector(
+                    //     onTap: () async {
+                    //       await value.pickmyImage();
+                    //     },
+                    //     child: Container(
+                    //       width: double.maxFinite,
+                    //       decoration: BoxDecoration(
+                    //           borderRadius: BorderRadius.circular(16.r),
+                    //           border: Border.all(
+                    //               color: Get.isDarkMode
+                    //                   ? Colors.teal
+                    //                   : primaryLightClr,
+                    //               width: 1)),
+                    //       child: Padding(
+                    //         padding: EdgeInsets.symmetric(
+                    //             vertical: 18.r, horizontal: 8),
+                    //         child: Row(
+                    //           children: [
+                    //             Icon(
+                    //               Icons.attach_file,
+                    //               color: Get.isDarkMode
+                    //                   ? Colors.teal
+                    //                   : primaryLightClr,
+                    //             ),
+                    //             SizedBox(
+                    //               width: 8.w,
+                    //             ),
+                    //             value.image == null
+                    //                 ? const Text(
+                    //                     "Add attachment ",
+                    //                     overflow: TextOverflow.ellipsis,
+                    //                     style: TextStyle(
+                    //                       fontSize: 16,
+                    //                       fontFamily: "Rubik Medium",
+                    //                     ),
+                    //                   )
+                    //                 : Text("image selected!"),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   );
+                    // }),
+
+                    // IF - USER - SELECTED - IMAGE
+
                     SizedBox(
                       height: 16.h,
                     ),
                     myTextField(
                       hintText: "Description",
-                      preIcon: const Icon(Icons.details),
+                      preIcon: Icons.details,
                       mycontroller: _itemDescriptionController,
                       validator: requiredValidator,
                     ),
@@ -495,6 +537,7 @@ class _AddDonationState extends State<AddDonation> {
                                         if (Get.find<PickImage>().image !=
                                             null) {
                                           Get.back();
+
                                           addList.addToList(
                                             donationDescription:
                                                 _userDonationDescriptionController
@@ -562,15 +605,24 @@ class _AddDonationState extends State<AddDonation> {
       );
       if (res == 'success') {
         setState(() {
-          loading = false;
+          // Get.find<AddMoreList>().list.clear();
+          _userTitleController.clear();
+          _userDonationDescriptionController.clear();
+          _userAddressController.clear();
         });
-        Get.snackbar('Message', 'Successfully');
       } else {
         setState(() {
-          loading = false;
+          _userTitleController.clear();
+          _userDonationDescriptionController.clear();
+          _userAddressController.clear();
         });
         Get.snackbar('Message', res.toString());
       }
     }
+    Get.snackbar('Message', "Donated Successfully");
+    setState(() {
+      loading = false;
+    });
+    Get.find<AddMoreList>().list.clear();
   }
 }

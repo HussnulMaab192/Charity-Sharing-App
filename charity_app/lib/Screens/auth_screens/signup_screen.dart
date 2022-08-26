@@ -142,21 +142,21 @@ class _SignUpState extends State<SignUp> {
                       // Enter name field,
                       myTextField(
                           hintText: "Enter Your Name",
-                          preIcon: const Icon(Icons.person),
+                          preIcon: Icons.person,
                           mycontroller: _nameController),
                       SizedBox(height: 10.h),
 
                       // Enter mobile no
                       myTextField(
                           hintText: "Enter Mobile number",
-                          preIcon: const Icon(Icons.phone_android),
+                          preIcon: Icons.phone_android,
                           mycontroller: _mobileNumberController),
                       SizedBox(height: 10.h),
 
                       // Enter email
                       myTextField(
                           hintText: "Enter Email",
-                          preIcon: const Icon(Icons.email),
+                          preIcon: Icons.email,
                           mycontroller: _emailController),
                       SizedBox(height: 10.h),
 
@@ -172,7 +172,7 @@ class _SignUpState extends State<SignUp> {
                       //           fontFamily: 'Rubik Medium',
                       //           color: Colors.black),
                       //       fillColor: Colors.orange,
-                      //       prefixIcon: const Icon(
+                      //       prefixIcon:
                       //         Icons.lock,
                       //         color: Colors.orange,
                       //       ),
@@ -266,7 +266,7 @@ class _SignUpState extends State<SignUp> {
                       // choose location
                       myTextField(
                           hintText: "Choose location",
-                          preIcon: const Icon(Icons.location_city_sharp),
+                          preIcon: Icons.location_city_sharp,
                           mycontroller: _locationController),
                     ],
                   ),

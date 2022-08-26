@@ -1,5 +1,8 @@
+import 'package:charity_app/constaints.dart';
+import 'package:charity_app/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 Column AppLogoText({String? title}) {
   return Column(
@@ -21,20 +24,15 @@ Column AppLogoText({String? title}) {
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 "Charity Sharing",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'Rubik Medium',
-                    color: Colors.black),
+                style: headingStyle,
               ),
               Text(
                 "App",
-                style: TextStyle(
-                    fontSize: 24,
-                    fontFamily: 'Rubik Medium',
-                    color: Colors.orange),
+                style: subHeadingStyle.copyWith(
+                    color: Get.isDarkMode ? Colors.teal : primaryLightClr),
               ),
             ],
           )
@@ -46,22 +44,18 @@ Column AppLogoText({String? title}) {
       ),
       // Add Donation Text
       Center(
-          child: Text(
-        "${title ?? 'Add Your Donation '} ",
-        style: TextStyle(
-            fontSize: 24, fontFamily: 'Rubik Medium', color: Colors.black),
-      )),
+        child: Text("${title ?? 'Add Your Donation '} ", style: headingStyle),
+      ),
 
       SizedBox(
         height: 14.h,
       ),
 
-      const Center(
+      Center(
           child: Text(
         "Feeding some one is the highest \nReward you can give to humanity",
         textAlign: TextAlign.center,
-        style: TextStyle(
-            fontSize: 16, fontFamily: 'Rubik Regular', color: Colors.orange),
+        style: quoteText,
       )),
       SizedBox(
         height: 24.h,

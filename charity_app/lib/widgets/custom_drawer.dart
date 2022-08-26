@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../Screens/auth_screens/signin_screen.dart';
+import '../constaints.dart';
 import '../services/firebase_auth/firebase_auth.dart';
 import '../../widgets/default_button.dart';
 
@@ -12,17 +13,20 @@ Widget MyDrawer(BuildContext context) {
   return Container(
     width: 250.h,
     child: Drawer(
-      backgroundColor: Colors.orange,
+      backgroundColor: Get.isDarkMode ? Colors.teal : primaryLightClr,
       child: ListView(
         // Important: Remove any padding from the ListView.
         padding: EdgeInsets.zero,
         children: <Widget>[
           UserAccountsDrawerHeader(
+            decoration: BoxDecoration(
+                color: Get.isDarkMode ? Colors.teal : Colors.white),
             accountName: Text(Get.find<UserController>().data!['name']),
             accountEmail: Text(Get.find<UserController>().data!['email']),
             currentAccountPicture: CircleAvatar(
-              backgroundColor: Colors.orange,
-              child: Text(
+              backgroundColor:
+                  Get.isDarkMode ? primaryDarkBorderClr : primaryLightClr,
+              child: const Text(
                 "H",
                 style: TextStyle(fontSize: 40.0),
               ),

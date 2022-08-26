@@ -1,5 +1,7 @@
+import 'package:charity_app/constaints.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class CustomTable extends StatelessWidget {
   final String name;
@@ -22,8 +24,10 @@ class CustomTable extends StatelessWidget {
     return Container(
       width: double.maxFinite,
       height: 50.h,
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey, width: 1)),
+      decoration: BoxDecoration(
+        border: Border(
+            bottom: BorderSide(
+                color: Get.isDarkMode ? Colors.teal : Colors.grey, width: 1)),
       ),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 8.0.r, horizontal: 0.w),
@@ -38,7 +42,13 @@ class CustomTable extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: isHeader != null ? "Rubik Medium" : "",
-                  color: isHeader != null ? Colors.orange : Colors.black,
+                  color: isHeader != null
+                      ? Get.isDarkMode
+                          ? Colors.teal
+                          : Colors.orange
+                      : Get.isDarkMode
+                          ? Colors.white
+                          : Colors.black,
                 ),
               ),
             ),
@@ -46,7 +56,13 @@ class CustomTable extends StatelessWidget {
               width: 1.0,
               height: double.maxFinite,
               decoration: BoxDecoration(
-                color: isHeader != null ? Colors.orange : Colors.black,
+                color: isHeader != null
+                    ? Get.isDarkMode
+                        ? Colors.teal
+                        : Colors.orange
+                    : Get.isDarkMode
+                        ? Colors.white
+                        : Colors.black,
                 border: Border.all(color: Colors.orange, width: 1),
               ),
             ),
@@ -58,7 +74,13 @@ class CustomTable extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: isHeader != null ? "Rubik Medium" : "",
-                  color: isHeader != null ? Colors.orange : Colors.black,
+                  color: isHeader != null
+                      ? Get.isDarkMode
+                          ? Colors.teal
+                          : Colors.orange
+                      : Get.isDarkMode
+                          ? Colors.white
+                          : Colors.black,
                 ),
               ),
             ),
@@ -76,9 +98,16 @@ class CustomTable extends StatelessWidget {
                 category,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: isHeader != null ? "Rubik Medium" : "",
-                    color: isHeader != null ? Colors.orange : Colors.black),
+                  fontSize: 16,
+                  fontFamily: isHeader != null ? "Rubik Medium" : "",
+                  color: isHeader != null
+                      ? Get.isDarkMode
+                          ? Colors.teal
+                          : Colors.orange
+                      : Get.isDarkMode
+                          ? Colors.white
+                          : Colors.black,
+                ),
               ),
             ),
             Container(

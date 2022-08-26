@@ -46,6 +46,7 @@ dependencies:
   form_field_validator: ^1.1.0
   firebase_storage:
   flutter_screenutil: ^5.5.3+2
+  google_fonts: ^3.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

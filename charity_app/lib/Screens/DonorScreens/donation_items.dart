@@ -68,17 +68,17 @@ class _DonationItemsState extends State<DonationItems> {
         children: [
           myTextField(
             hintText: "Enter title",
-            preIcon: Icon(Icons.person),
+            preIcon: Icons.person,
             mycontroller: _userTitleController,
           ),
           myTextField(
             hintText: "Enter Description",
-            preIcon: Icon(Icons.person),
+            preIcon: Icons.person,
             mycontroller: _userDescriptionController,
           ),
           myTextField(
               hintText: "Enter Address",
-              preIcon: Icon(Icons.person),
+              preIcon: Icons.person,
               mycontroller: _userAddressController),
           DefaultButton(
               text: "Add Item",

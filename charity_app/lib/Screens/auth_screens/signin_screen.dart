@@ -36,7 +36,7 @@ class _SignInState extends State<SignIn> {
       });
       Get.snackbar("Message", "Successfully loged in.");
       // ignore: use_build_context_synchronously
-      Get.off(const AddDonation());
+      Get.offAll(const AddDonation());
       _emailController.clear();
       _paswordControler.clear();
     } else {
@@ -173,9 +173,9 @@ class _SignInState extends State<SignIn> {
                       child: CupertinoActivityIndicator(),
                     )
                   : InkWell(
-                      onTap: () {
+                      onTap: () async {
                         if ((formKey.currentState!.validate())) {
-                          signInUser();
+                          await signInUser();
                         } else {
                           return;
                         }

@@ -29,4 +29,12 @@ class PickImage extends GetxController {
     image = null;
     update();
   }
+
+  bool saveButton() {
+    if (image == null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
