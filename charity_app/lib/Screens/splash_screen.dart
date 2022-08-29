@@ -1,10 +1,10 @@
-import 'package:charity_app/Screens/DonorScreens/add_donation.dart';
 import 'package:charity_app/Screens/auth_screens/signin_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/get_user.dart';
+import 'DonorScreens/Add Donations/add_donation.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -21,20 +21,20 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> chkLogin() async {
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     if (FirebaseAuth.instance.currentUser != null) {
       await Get.find<UserController>().getmyUser();
-      Get.off(AddDonation());
+      Get.off(const AddDonation());
     } else {
-      Get.off(SignIn());
+      Get.off(const SignIn());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     Get.put(UserController());
-    return Scaffold(
-      body: Center(child: FlutterLogo()),
+    return const Scaffold(
+      body: Center(child: const FlutterLogo()),
     );
   }
 }

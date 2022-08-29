@@ -4,19 +4,18 @@ import 'package:charity_app/constaints.dart';
 import 'package:charity_app/controllers/add_donation_controller.dart';
 import 'package:charity_app/controllers/pick_image_controller.dart';
 import 'package:charity_app/services/firebase_auth/firebase_auth.dart';
-import 'package:charity_app/utils/imagepicker.dart';
 import 'package:charity_app/utils/validations/form_field_validation.dart';
+import 'package:charity_app/widgets/Navigation%20Bar/fancy_floating_navigation_bar.dart';
 import 'package:charity_app/widgets/tabular_data/custom_table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../controllers/get_user.dart';
-import '../../services/firebase_methods/firebase_methods.dart';
-import '../../theme.dart';
-import '../../widgets/app_logo_text.dart';
-import '../../widgets/custom_drawer.dart';
-import '../../widgets/custom_text_field.dart';
-import '../../widgets/default_button.dart';
+import '../../../services/firebase_methods/firebase_methods.dart';
+import '../../../theme.dart';
+import '../../../widgets/app_logo_text.dart';
+import '../../../widgets/custom_drawer.dart';
+import '../../../widgets/custom_text_field.dart';
+import '../../../widgets/default_button.dart';
 
 class AddDonation extends StatefulWidget {
   const AddDonation({Key? key}) : super(key: key);
@@ -27,6 +26,13 @@ class AddDonation extends StatefulWidget {
 //noumana@devnatives.com
 
 class _AddDonationState extends State<AddDonation> {
+  final iconList = <IconData>[
+    Icons.home,
+    Icons.search,
+    Icons.person,
+  ];
+
+  int _selectedIndex = 0;
   final _alertFormKey = GlobalKey<FormState>();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _userTitleController = TextEditingController();
@@ -39,6 +45,7 @@ class _AddDonationState extends State<AddDonation> {
   final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _attachmentController = TextEditingController();
+  PageController _pageController = PageController();
   bool isUpdate = false;
   Uint8List? image;
   String? showImageMessage;
@@ -49,132 +56,154 @@ class _AddDonationState extends State<AddDonation> {
     Get.put(PickImage());
     // MY-LIST
     return SafeArea(
-        child: Scaffold(
-      backgroundColor: Get.isDarkMode ? primaryDarkClr : Colors.white,
-      appBar: AppBar(
-        backgroundColor: Get.isDarkMode ? primaryDarkBorderClr : Colors.orange,
-        title: const Text(
-          "Add Doantion",
-          style: TextStyle(),
-        ),
-        actions: [
-          ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(
-                      Get.isDarkMode ? primaryDarkBorderClr : primaryLightClr)),
-              onPressed: () async {
-                Firebaseauth firebaseauth = Firebaseauth();
-                String res = await firebaseauth.signOut();
-                if (res == 'success') {
-                  Get.to(const SignIn());
-                } else {
-                  return;
-                }
-              },
-              child: const Text("log out "))
-        ],
-      ),
-      drawer: MyDrawer(context),
-      resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: 8.w),
-          child: Column(
-            children: [
-              // APP-LOGO APP-TITLE-TEXT
-              AppLogoText(),
-              MyForm(),
-              SizedBox(height: 12.h),
-
-              GetBuilder<AddMoreList>(builder: (value) {
-                return Column(
-                  children: [
-                    value.list.isNotEmpty
-                        ? CustomTable(
-                            isHeader: true,
-                            actions: Text(
-                              "Actions",
-                              style: TextStyle(
-                                  color: Get.isDarkMode
-                                      ? Colors.teal
-                                      : primaryLightClr),
-                            ),
-                            category: "Category",
-                            name: "Name",
-                            quantity: "Qty")
-                        : SizedBox(),
-                    ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      itemCount: value.list.length,
-                      itemBuilder: (context, index) {
-                        return CustomTable(
-                            actions: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: () async {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: Text("My title"),
-                                          content: Text("This is my message."),
-                                          actions: [
-                                            TextButton(
-                                              child: Text("Cancel"),
-                                              onPressed: () {
-                                                Get.back();
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: Text("Delete"),
-                                              onPressed: () async {
-                                                Navigator.of(context).pop();
-                                                await value.list
-                                                    .removeAt(index);
-
-                                                setState(() {});
-
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(const SnackBar(
-                                                        content: Text(
-                                                            "Deleted Scucessfully!")));
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: const Icon(Icons.delete),
-                                ),
-                                SizedBox(
-                                  width: 2.w,
-                                ),
-                                GestureDetector(
-                                  onTap: () async {
-                                    await newMethod(
-                                      value: index,
-                                    );
-                                  },
-                                  child: const Icon(Icons.edit),
-                                ),
-                              ],
-                            ),
-                            category: value.list[index]['category'],
-                            name: value.list[index]['itemName'],
-                            quantity: value.list[index]['quantity']);
-                      },
-                    ),
-                  ],
-                );
-              })
-            ],
+      child: Scaffold(
+        backgroundColor: Get.isDarkMode ? primaryDarkClr : Colors.white,
+        appBar: AppBar(
+          backgroundColor:
+              Get.isDarkMode ? primaryDarkBorderClr : Colors.orange,
+          title: const Text(
+            "Add Doantion",
+            style: TextStyle(),
           ),
+          actions: [
+            ElevatedButton(
+                style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Get.isDarkMode
+                        ? primaryDarkBorderClr
+                        : primaryLightClr)),
+                onPressed: () async {
+                  Firebaseauth firebaseauth = Firebaseauth();
+                  String res = await firebaseauth.signOut();
+                  if (res == 'success') {
+                    Get.to(const SignIn());
+                  } else {
+                    return;
+                  }
+                },
+                child: const Text("log out "))
+          ],
         ),
+        drawer: MyDrawer(context),
+        resizeToAvoidBottomInset: false,
+        body: PageView(
+          controller: _pageController,
+          children: [
+            Center(
+              child: Icon(
+                Icons.shopping_cart,
+                color: Color.fromARGB(255, 4, 31, 48),
+              ),
+            ),
+            SingleChildScrollView(
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 8.w),
+                child: Column(
+                  children: [
+                    // APP-LOGO APP-TITLE-TEXT
+                    AppLogoText(),
+                    MyForm(),
+                    SizedBox(height: 12.h),
+
+                    GetBuilder<AddMoreList>(builder: (value) {
+                      return Column(
+                        children: [
+                          value.list.isNotEmpty
+                              ? CustomTable(
+                                  isHeader: true,
+                                  actions: Text(
+                                    "Actions",
+                                    style: TextStyle(
+                                        color: Get.isDarkMode
+                                            ? Colors.teal
+                                            : primaryLightClr),
+                                  ),
+                                  category: "Category",
+                                  name: "Name",
+                                  quantity: "Qty")
+                              : SizedBox(),
+                          ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            scrollDirection: Axis.vertical,
+                            itemCount: value.list.length,
+                            itemBuilder: (context, index) {
+                              return CustomTable(
+                                  actions: Row(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: Text("My title"),
+                                                content:
+                                                    Text("This is my message."),
+                                                actions: [
+                                                  TextButton(
+                                                    child: Text("Cancel"),
+                                                    onPressed: () {
+                                                      Get.back();
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: Text("Delete"),
+                                                    onPressed: () async {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      await value.list
+                                                          .removeAt(index);
+
+                                                      setState(() {});
+
+                                                      ScaffoldMessenger.of(
+                                                              context)
+                                                          .showSnackBar(
+                                                              const SnackBar(
+                                                                  content: Text(
+                                                                      "Deleted Scucessfully!")));
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: const Icon(Icons.delete),
+                                      ),
+                                      SizedBox(
+                                        width: 2.w,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          await newMethod(
+                                            value: index,
+                                          );
+                                        },
+                                        child: const Icon(Icons.edit),
+                                      ),
+                                    ],
+                                  ),
+                                  category: value.list[index]['category'],
+                                  name: value.list[index]['itemName'],
+                                  quantity: value.list[index]['quantity']);
+                            },
+                          ),
+                        ],
+                      );
+                    }),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        // bottomNavigationBar: customNavigationBar(
+        //
+        //    selectedIndex: _selectedIndex, onItemTapped: _onItemTapped)
+        bottomNavigationBar: fancyBar(ontap: _onItemTapped),
       ),
-    ));
+    );
   }
 
 // TEXT-FORM-FIELDS
@@ -582,6 +611,17 @@ class _AddDonationState extends State<AddDonation> {
           ),
         ),
         radius: 10.0);
+  }
+
+  // void _onItemTapped(int myindex) {
+  //   setState(() {
+  //     _selectedIndex = myindex;
+  //   });
+  // }
+  void _onItemTapped(int myindex) {
+    _pageController.animateToPage(myindex,
+        curve: Curves.fastLinearToSlowEaseIn,
+        duration: Duration(milliseconds: 600));
   }
 
   FirebsaeMethods firebsaeMethods = FirebsaeMethods();

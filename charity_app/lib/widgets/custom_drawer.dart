@@ -1,9 +1,11 @@
+import 'package:charity_app/Screens/DonorScreens/Active%20donations/active_donations.dart';
 import 'package:charity_app/Screens/DonorScreens/view_request.dart';
 import 'package:charity_app/controllers/get_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import '../Screens/DonorScreens/My Donations/view_my_donations.dart';
 import '../Screens/auth_screens/signin_screen.dart';
 import '../constaints.dart';
 import '../services/firebase_auth/firebase_auth.dart';
@@ -32,6 +34,24 @@ Widget MyDrawer(BuildContext context) {
               ),
             ),
           ),
+          // My Donations
+          ListTile(
+            leading: const Icon(Icons.handshake),
+            title: const Text("My Doantions"),
+            onTap: () {
+              Get.to(const ViewMyDonations());
+            },
+          ),
+          // Active Donations
+          ListTile(
+            leading: const Icon(Icons.notifications_active),
+            title: const Text("Active Donations"),
+            onTap: () {
+              Get.to(const ActiveDonations());
+            },
+          ),
+
+          //  Donate
           ListTile(
             leading: const Icon(Icons.grid_view),
             title: const Text("Donate"),
@@ -64,6 +84,7 @@ Widget MyDrawer(BuildContext context) {
               ));
             },
           ),
+          // Request
           ListTile(
             leading: const Icon(Icons.settings),
             title: const Text("Request"),
@@ -92,6 +113,7 @@ Widget MyDrawer(BuildContext context) {
               ));
             },
           ),
+          //volunteer
           ListTile(
             leading: const Icon(Icons.contacts),
             title: const Text("Volunteer"),
@@ -99,6 +121,7 @@ Widget MyDrawer(BuildContext context) {
               Navigator.pop(context);
             },
           ),
+          // Log out
           ListTile(
             leading: const Icon(Icons.contacts),
             title: const Text("Log out"),
