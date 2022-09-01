@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 class AddDonationModel {
   late String id;
   late String name;
@@ -8,12 +6,16 @@ class AddDonationModel {
   late String description;
   late String category;
   late String pickUpLocation;
+  late DateTime date;
+  late String status;
 
   late String donationDescription;
 
   late String attachment;
   AddDonationModel({
+    required this.date,
     required this.id,
+    required this.status,
     required this.name,
     required this.title,
     required this.quantity,
@@ -34,6 +36,8 @@ class AddDonationModel {
   String getCategoty() => category;
   String getattachment() => attachment;
 
+  String getStatus() => status;
+
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
@@ -44,6 +48,8 @@ class AddDonationModel {
         "pickUpLocation": pickUpLocation,
         "donationDescription": donationDescription,
         "attachment": attachment,
+        "date": date,
+        "status": status,
       };
 
   AddDonationModel.fromJson(Map<String, dynamic> json) {
@@ -57,6 +63,8 @@ class AddDonationModel {
       pickUpLocation: json["pickUpLocation"],
       donationDescription: json["donationDescription"],
       attachment: json["attachment"],
+      date: json["date"],
+      status: json["status"],
     );
   }
 }

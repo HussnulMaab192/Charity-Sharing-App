@@ -20,6 +20,7 @@ class FirebsaeMethods {
     required String pickUpLocation,
     required String donationDescription,
     required Uint8List attachment,
+    required DateTime date,
   }) async {
     String res = "Some error occured";
     try {
@@ -36,6 +37,8 @@ class FirebsaeMethods {
         pickUpLocation: pickUpLocation,
         donationDescription: donationDescription,
         attachment: photoUrl,
+        date: date,
+        status: "pending",
       );
 
       String id = const Uuid().v1();

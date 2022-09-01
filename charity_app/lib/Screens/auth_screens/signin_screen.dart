@@ -111,7 +111,7 @@ class _SignInState extends State<SignIn> {
                         alignment: Alignment.topRight,
                         child: GestureDetector(
                           onTap: () {
-                            Get.to(ForgetPassword());
+                            Get.to(const ForgetPassword());
                           },
                           child: const Text(
                             "Forgot Password",
@@ -164,7 +164,7 @@ class _SignInState extends State<SignIn> {
                           child: Center(
                             child: Padding(
                               padding: EdgeInsets.all(16.0.r),
-                              child: Text("Sign In"),
+                              child: const Text("Sign In"),
                             ),
                           ),
                         ),

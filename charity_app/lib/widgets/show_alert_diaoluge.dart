@@ -23,8 +23,8 @@ showAlertDialog({
 
   // set up the AlertDialog
   AlertDialog alert = AlertDialog(
-    title: Text("Alert!"),
-    content: Text("Are you sure you want to delete?"),
+    title: const Text("Alert!"),
+    content: const Text("Are you sure you want to delete?"),
     actions: [
       cancelButton,
       continueButton,

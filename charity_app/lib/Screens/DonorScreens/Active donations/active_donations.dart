@@ -1,10 +1,9 @@
-import 'package:charity_app/controllers/get_my_donations.dart';
 import 'package:charity_app/widgets/app_logo_text.dart';
-import 'package:charity_app/widgets/default_button.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:get/get.dart';
+
+import '../../../widgets/custom_card_for_mydoantion.dart';
 
 class ActiveDonations extends StatefulWidget {
   const ActiveDonations({Key? key}) : super(key: key);
@@ -16,12 +15,45 @@ class ActiveDonations extends StatefulWidget {
 class _ActiveDonationsState extends State<ActiveDonations> {
   @override
   Widget build(BuildContext context) {
+    final time = DateTime.now();
+    DateTime tempTime;
     return Scaffold(
       body: SafeArea(
-          child: Column(
-        children: [
-          AppLogoText(),
-        ],
+          child: SingleChildScrollView(
+        child: Column(
+          children: [
+            AppLogoText(),
+            StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("DonatedItems")
+                  .where("status", isEqualTo: "pending")
+                  .orderBy("date", descending: true)
+                  .snapshots(),
+              builder: (context,
+                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+
+                return ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      print(snapshot.data!.docs.length);
+                      final list = [];
+
+                      //  list.add(index);
+                      return MyCustomCard(
+                        snap: snapshot.data!.docs[index].data(),
+                      );
+                    });
+              },
+            ),
+          ],
+        ),
       )),
     );
   }

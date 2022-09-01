@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controllers/get_user.dart';
+import '../controllers/local_donation_controller.dart';
 import 'DonorScreens/Add Donations/add_donation.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -33,8 +34,10 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     Get.put(UserController());
+    Get.put(LocalDonationController());
+    Get.find<LocalDonationController>().getTask();
     return const Scaffold(
-      body: Center(child: const FlutterLogo()),
+      body: Center(child: FlutterLogo()),
     );
   }
 }

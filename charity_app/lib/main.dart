@@ -1,5 +1,6 @@
 import 'package:charity_app/Screens/splash_screen.dart';
 import 'package:charity_app/firebase_options.dart';
+import 'package:charity_app/services/Databases/my_sqflite.dart';
 import 'package:charity_app/theme.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ void main() async {
   WidgetsFlutterBinding
       .ensureInitialized(); // only for android // do some changings for web and ios
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await DBHelper.initDb();
   runApp(const MyApp());
 }
 

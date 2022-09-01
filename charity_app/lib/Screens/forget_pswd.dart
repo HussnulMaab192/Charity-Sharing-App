@@ -16,9 +16,8 @@ class ForgetPassword extends StatefulWidget {
 }
 
 class _ForgetPasswordState extends State<ForgetPassword> {
-  @override
   final TextEditingController _emailController = TextEditingController();
-
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(

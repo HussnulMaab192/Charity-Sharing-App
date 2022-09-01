@@ -1,17 +1,20 @@
 import 'dart:typed_data';
+
+import 'package:charity_app/Model/local_storage_donation_model.dart';
 import 'package:charity_app/Screens/auth_screens/signin_screen.dart';
 import 'package:charity_app/constaints.dart';
 import 'package:charity_app/controllers/add_donation_controller.dart';
 import 'package:charity_app/controllers/pick_image_controller.dart';
 import 'package:charity_app/services/firebase_auth/firebase_auth.dart';
 import 'package:charity_app/utils/validations/form_field_validation.dart';
-import 'package:charity_app/widgets/Navigation%20Bar/fancy_floating_navigation_bar.dart';
 import 'package:charity_app/widgets/tabular_data/custom_table.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../controllers/local_donation_controller.dart';
 import '../../../services/firebase_methods/firebase_methods.dart';
 import '../../../theme.dart';
+
 import '../../../widgets/app_logo_text.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/custom_text_field.dart';
@@ -26,6 +29,7 @@ class AddDonation extends StatefulWidget {
 //noumana@devnatives.com
 
 class _AddDonationState extends State<AddDonation> {
+  bool chkdonation = false;
   final iconList = <IconData>[
     Icons.home,
     Icons.search,
@@ -54,7 +58,9 @@ class _AddDonationState extends State<AddDonation> {
   Widget build(BuildContext context) {
     Get.put(AddMoreList());
     Get.put(PickImage());
+
     // MY-LIST
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Get.isDarkMode ? primaryDarkClr : Colors.white,
@@ -88,12 +94,6 @@ class _AddDonationState extends State<AddDonation> {
         body: PageView(
           controller: _pageController,
           children: [
-            Center(
-              child: Icon(
-                Icons.shopping_cart,
-                color: Color.fromARGB(255, 4, 31, 48),
-              ),
-            ),
             SingleChildScrollView(
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 8.w),
@@ -104,66 +104,77 @@ class _AddDonationState extends State<AddDonation> {
                     MyForm(),
                     SizedBox(height: 12.h),
 
-                    GetBuilder<AddMoreList>(builder: (value) {
-                      return Column(
-                        children: [
-                          value.list.isNotEmpty
-                              ? CustomTable(
-                                  isHeader: true,
-                                  actions: Text(
-                                    "Actions",
-                                    style: TextStyle(
-                                        color: Get.isDarkMode
-                                            ? Colors.teal
-                                            : primaryLightClr),
-                                  ),
-                                  category: "Category",
-                                  name: "Name",
-                                  quantity: "Qty")
-                              : SizedBox(),
-                          ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            scrollDirection: Axis.vertical,
-                            itemCount: value.list.length,
-                            itemBuilder: (context, index) {
-                              return CustomTable(
+                    GetBuilder<LocalDonationController>(
+                        builder: (localdonation) {
+                      return GetBuilder<AddMoreList>(builder: (value) {
+                        return Column(
+                          children: [
+                            localdonation.taskList.isNotEmpty
+                                ? CustomTable(
+                                    isHeader: true,
+                                    actions: Text(
+                                      "Actions",
+                                      style: TextStyle(
+                                          color: Get.isDarkMode
+                                              ? Colors.teal
+                                              : primaryLightClr),
+                                    ),
+                                    category: "Category",
+                                    name: "Name",
+                                    quantity: "Qty")
+                                : const SizedBox(),
+                            ListView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              scrollDirection: Axis.vertical,
+                              itemCount: localdonation.taskList.length,
+                              itemBuilder: (context, index) {
+                                return CustomTable(
                                   actions: Row(
                                     children: [
                                       GestureDetector(
                                         onTap: () async {
+                                          print("the task list is " +
+                                              localdonation.taskList
+                                                  .toString());
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
                                               return AlertDialog(
-                                                title: Text("My title"),
-                                                content:
-                                                    Text("This is my message."),
+                                                title: const Text("My title"),
+                                                content: const Text(
+                                                    "This is my message."),
                                                 actions: [
                                                   TextButton(
-                                                    child: Text("Cancel"),
+                                                    child: const Text("Cancel"),
                                                     onPressed: () {
                                                       Get.back();
                                                     },
                                                   ),
-                                                  TextButton(
-                                                    child: Text("Delete"),
-                                                    onPressed: () async {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      await value.list
-                                                          .removeAt(index);
+                                                  GetBuilder<
+                                                          LocalDonationController>(
+                                                      builder: (value) {
+                                                    return TextButton(
+                                                      child:
+                                                          const Text("Delete"),
+                                                      onPressed: () async {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        await value.delete(
+                                                            task: Get.find<
+                                                                    LocalDonationController>()
+                                                                .taskList[index]);
+                                                        setState(() {});
 
-                                                      setState(() {});
-
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              const SnackBar(
-                                                                  content: Text(
-                                                                      "Deleted Scucessfully!")));
-                                                    },
-                                                  ),
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                const SnackBar(
+                                                                    content: Text(
+                                                                        "Deleted Scucessfully!")));
+                                                      },
+                                                    );
+                                                  }),
                                                 ],
                                               );
                                             },
@@ -184,24 +195,42 @@ class _AddDonationState extends State<AddDonation> {
                                       ),
                                     ],
                                   ),
-                                  category: value.list[index]['category'],
-                                  name: value.list[index]['itemName'],
-                                  quantity: value.list[index]['quantity']);
-                            },
-                          ),
-                        ],
-                      );
+                                  category: localdonation
+                                      .taskList[index].category
+                                      .toString(),
+                                  name: localdonation.taskList[index].itemName
+                                      .toString(),
+                                  quantity: localdonation
+                                      .taskList[index].quantity
+                                      .toString(),
+                                );
+                              },
+                            ),
+                          ],
+                        );
+                      });
                     }),
                   ],
                 ),
               ),
             ),
+            const Center(
+              child: Icon(
+                Icons.shopping_cart,
+                color: Color.fromARGB(255, 4, 31, 48),
+              ),
+            ),
+            const Center(
+              child: Icon(
+                Icons.shopping_cart,
+                color: Color.fromARGB(255, 4, 31, 48),
+              ),
+            ),
           ],
         ),
         // bottomNavigationBar: customNavigationBar(
-        //
-        //    selectedIndex: _selectedIndex, onItemTapped: _onItemTapped)
-        bottomNavigationBar: fancyBar(ontap: _onItemTapped),
+        //     selectedIndex: _selectedIndex, onItemTapped: _onItemTapped)
+        // bottomNavigationBar: fancyBar(ontap: _onItemTapped),
       ),
     );
   }
@@ -246,7 +275,7 @@ class _AddDonationState extends State<AddDonation> {
                     }
                   },
                 ),
-                value.list.isEmpty
+                Get.find<LocalDonationController>().taskList.isEmpty
                     ? DefaultButton(
                         text: "Donate",
                         onPressed: null,
@@ -259,7 +288,7 @@ class _AddDonationState extends State<AddDonation> {
                               await submit();
                             },
                           ),
-                value.list.isEmpty
+                Get.find<LocalDonationController>().taskList.isEmpty
                     ? DefaultButton(
                         text: "Cancel",
                         onPressed: null,
@@ -267,11 +296,25 @@ class _AddDonationState extends State<AddDonation> {
                     : DefaultButton(
                         text: "Cancel",
                         onPressed: () async {
+                          await Get.find<LocalDonationController>().deleteAll();
+                          LocalDonation localDonation = LocalDonation(
+                              null,
+                              '',
+                              '',
+                              '',
+                              '',
+                              '',
+                              '',
+                              Get.find<PickImage>().image,
+                              '',
+                              '',
+                              '');
                           setState(() {
                             _userDonationDescriptionController.clear();
                             _userTitleController.clear();
                             _userAddressController.clear();
-                            Get.find<AddMoreList>().list.clear();
+                            Get.find<LocalDonationController>()
+                                .delete(task: localDonation);
                           });
                         },
                       ),
@@ -287,14 +330,14 @@ class _AddDonationState extends State<AddDonation> {
     int? value,
   }) async {
     final TextEditingController _userItemUpdate = TextEditingController(
-        text: Get.find<AddMoreList>().list[value!]['itemName']);
+        text: Get.find<LocalDonationController>().taskList[value!].itemName);
     final TextEditingController _userCategoryUpdate = TextEditingController(
-        text: Get.find<AddMoreList>().list[value]['category']);
+        text: Get.find<LocalDonationController>().taskList[value].category);
     final TextEditingController _userQuantityUpdate = TextEditingController(
-        text: Get.find<AddMoreList>().list[value]['quantity']);
+        text: Get.find<LocalDonationController>().taskList[value].quantity);
 
     final TextEditingController _descUpdate = TextEditingController(
-        text: Get.find<AddMoreList>().list[value]['description']);
+        text: Get.find<LocalDonationController>().taskList[value].description);
 
     Get.defaultDialog(
         title: '',
@@ -388,20 +431,46 @@ class _AddDonationState extends State<AddDonation> {
                           builder: (addList) {
                             return DefaultButton(
                               text: 'Update',
-                              onPressed: () {
+                              onPressed: () async {
                                 if (_alertFormKey.currentState!.validate()) {
                                   Get.back();
 
-                                  Get.find<AddMoreList>().list[value]["title"] =
-                                      _userTitleController.text;
-                                  Get.find<AddMoreList>().list[value]
-                                      ["itemName"] = _userItemUpdate.text;
-                                  Get.find<AddMoreList>().list[value]
-                                      ["category"] = _userCategoryUpdate.text;
-                                  Get.find<AddMoreList>().list[value]
-                                      ["quantity"] = _userQuantityUpdate.text;
-                                  Get.find<AddMoreList>().list[value]
-                                      ["description"] = _descUpdate.text;
+                                  // UPDATING - LIST - IN - SQL
+                                  await Get.find<LocalDonationController>()
+                                      .updateTask(
+                                          id: Get.find<
+                                                  LocalDonationController>()
+                                              .taskList[value]
+                                              .id!,
+                                          localDonation: LocalDonation(
+                                            null,
+                                            _userTitleController.text,
+                                            '',
+                                            _userItemUpdate.text,
+                                            _userCategoryUpdate.text,
+                                            _userQuantityUpdate.text,
+                                            '',
+                                            Get.find<PickImage>().image,
+                                            _descUpdate.text,
+                                            '',
+                                            '',
+                                          ));
+
+                                  Get.find<LocalDonationController>()
+                                      .taskList[value]
+                                      .title = _userTitleController.text;
+                                  Get.find<LocalDonationController>()
+                                      .taskList[value]
+                                      .itemName = _userItemUpdate.text;
+                                  Get.find<LocalDonationController>()
+                                      .taskList[value]
+                                      .category = _userCategoryUpdate.text;
+                                  Get.find<LocalDonationController>()
+                                      .taskList[value]
+                                      .quantity = _userQuantityUpdate.text;
+                                  Get.find<LocalDonationController>()
+                                      .taskList[value]
+                                      .description = _descUpdate.text;
 
                                   _itemNameController.clear();
                                   _categoryController.clear();
@@ -552,58 +621,89 @@ class _AddDonationState extends State<AddDonation> {
                       mycontroller: _itemDescriptionController,
                       validator: requiredValidator,
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        GetBuilder<AddMoreList>(
-                          builder: (addList) {
-                            return isUpdate == false
-                                ? DefaultButton(
-                                    text: 'Save',
-                                    onPressed: () {
-                                      if (_alertFormKey.currentState!
-                                          .validate()) {
-                                        if (Get.find<PickImage>().image !=
-                                            null) {
-                                          Get.back();
+                    GetBuilder<LocalDonationController>(
+                        builder: (localDonationController) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          GetBuilder<AddMoreList>(
+                            builder: (addList) {
+                              return isUpdate == false
+                                  ? DefaultButton(
+                                      text: 'Save',
+                                      onPressed: () async {
+                                        if (_alertFormKey.currentState!
+                                            .validate()) {
+                                          if (Get.find<PickImage>().image !=
+                                              null) {
+                                            Get.back();
+                                            final row = await localDonationController
+                                                .addTask(
+                                                    task: LocalDonation(
+                                                        null,
+                                                        _userTitleController
+                                                            .text,
+                                                        _userDonationDescriptionController
+                                                            .text,
+                                                        _itemNameController
+                                                            .text,
+                                                        _categoryController
+                                                            .text,
+                                                        _quantityController
+                                                            .text,
+                                                        _userAddressController
+                                                            .text,
+                                                        Get.find<PickImage>()
+                                                            .image,
+                                                        _itemDescriptionController
+                                                            .text,
+                                                        DateTime.now()
+                                                            .toString(),
+                                                        "pending"));
 
-                                          addList.addToList(
-                                            donationDescription:
-                                                _userDonationDescriptionController
-                                                    .text,
-                                            title: _userTitleController.text,
-                                            itemName: _itemNameController.text,
-                                            quantity: _quantityController.text,
-                                            description:
-                                                _itemDescriptionController.text,
-                                            pickUpLocation:
-                                                _userAddressController.text,
-                                            attachment:
-                                                Get.find<PickImage>().image!,
-                                            category: _categoryController.text,
-                                          );
+                                            print(row);
+                                            addList.addToList(
+                                              donationDescription:
+                                                  _userDonationDescriptionController
+                                                      .text,
+                                              title: _userTitleController.text,
+                                              itemName:
+                                                  _itemNameController.text,
+                                              quantity:
+                                                  _quantityController.text,
+                                              description:
+                                                  _itemDescriptionController
+                                                      .text,
+                                              pickUpLocation:
+                                                  _userAddressController.text,
+                                              attachment:
+                                                  Get.find<PickImage>().image!,
+                                              category:
+                                                  _categoryController.text,
+                                            );
 
-                                          _itemNameController.clear();
-                                          _categoryController.clear();
-                                          _quantityController.clear();
-                                          _itemDescriptionController.clear();
-                                          _attachmentController.clear();
-                                          Get.find<PickImage>().clear();
-                                        } else {}
-                                      }
-                                    },
-                                  )
-                                : DefaultButton(
-                                    text: "Update", onPressed: () {});
-                          },
-                        ),
-                        DefaultButton(
-                            text: 'Cancel',
-                            onPressed: () {
-                              Get.back();
-                            }),
-                      ],
-                    ),
+                                            _itemNameController.clear();
+                                            _categoryController.clear();
+                                            _quantityController.clear();
+                                            _itemDescriptionController.clear();
+                                            _attachmentController.clear();
+                                            Get.find<PickImage>().clear();
+                                          } else {}
+                                        }
+                                      },
+                                    )
+                                  : DefaultButton(
+                                      text: "Update", onPressed: () {});
+                            },
+                          ),
+                          DefaultButton(
+                              text: 'Cancel',
+                              onPressed: () {
+                                Get.back();
+                              }),
+                        ],
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -619,9 +719,19 @@ class _AddDonationState extends State<AddDonation> {
   //   });
   // }
   void _onItemTapped(int myindex) {
-    _pageController.animateToPage(myindex,
+    // _pageController.animateToPage(myindex,
+    //     curve: Curves.fastLinearToSlowEaseIn,
+    //     duration: Duration(milliseconds: 600),
+
+    // );//
+    setState(() {
+      _selectedIndex = myindex;
+      _pageController.animateToPage(
+        _selectedIndex,
+        duration: const Duration(milliseconds: 600),
         curve: Curves.fastLinearToSlowEaseIn,
-        duration: Duration(milliseconds: 600));
+      );
+    });
   }
 
   FirebsaeMethods firebsaeMethods = FirebsaeMethods();
@@ -631,17 +741,30 @@ class _AddDonationState extends State<AddDonation> {
     setState(() {
       loading = true;
     });
-    for (var i = 0; i < Get.find<AddMoreList>().list.length; i++) {
+    for (var i = 0;
+        i < Get.find<LocalDonationController>().taskList.length;
+        i++) {
       String res = await firebsaeMethods.addDonation(
-        title: Get.find<AddMoreList>().list[i]['title'],
-        name: Get.find<AddMoreList>().list[i]['itemName'],
-        quantity: Get.find<AddMoreList>().list[i]['quantity'],
-        description: Get.find<AddMoreList>().list[i]['description'],
-        category: Get.find<AddMoreList>().list[i]['category'],
-        pickUpLocation: Get.find<AddMoreList>().list[i]['pickUpLocation'],
-        donationDescription: Get.find<AddMoreList>().list[i]
-            ['donationDescription'],
-        attachment: Get.find<AddMoreList>().list[i]['attachment'],
+        date: DateTime.now(),
+        title: Get.find<LocalDonationController>().taskList[i].title.toString(),
+        name:
+            Get.find<LocalDonationController>().taskList[i].itemName.toString(),
+        quantity:
+            Get.find<LocalDonationController>().taskList[i].quantity.toString(),
+        description: Get.find<LocalDonationController>()
+            .taskList[i]
+            .description
+            .toString(),
+        category:
+            Get.find<LocalDonationController>().taskList[i].category.toString(),
+        pickUpLocation:
+            Get.find<LocalDonationController>().taskList[i].pickup.toString(),
+        donationDescription: Get.find<LocalDonationController>()
+            .taskList[i]
+            .itemDescription
+            .toString(),
+        attachment:
+            Get.find<LocalDonationController>().taskList[i].attachement!,
       );
       if (res == 'success') {
         setState(() {
@@ -650,6 +773,8 @@ class _AddDonationState extends State<AddDonation> {
           _userDonationDescriptionController.clear();
           _userAddressController.clear();
         });
+        await Get.find<LocalDonationController>().deleteAll();
+        print("deleted all data on donation button");
       } else {
         setState(() {
           _userTitleController.clear();

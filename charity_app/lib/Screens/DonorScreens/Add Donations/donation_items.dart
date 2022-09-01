@@ -45,7 +45,7 @@ class _DonationItemsState extends State<DonationItems> {
       ),
       drawer: MyDrawer(context),
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
+        physics: const BouncingScrollPhysics(),
         child: Container(
           margin: EdgeInsets.symmetric(horizontal: 24.w),
           child: Column(

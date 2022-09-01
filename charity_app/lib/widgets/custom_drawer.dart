@@ -4,7 +4,6 @@ import 'package:charity_app/controllers/get_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-
 import '../Screens/DonorScreens/My Donations/view_my_donations.dart';
 import '../Screens/auth_screens/signin_screen.dart';
 import '../constaints.dart';
@@ -12,7 +11,7 @@ import '../services/firebase_auth/firebase_auth.dart';
 import '../../widgets/default_button.dart';
 
 Widget MyDrawer(BuildContext context) {
-  return Container(
+  return SizedBox(
     width: 250.h,
     child: Drawer(
       backgroundColor: Get.isDarkMode ? Colors.teal : primaryLightClr,
@@ -35,10 +34,13 @@ Widget MyDrawer(BuildContext context) {
             ),
           ),
           // My Donations
+
           ListTile(
             leading: const Icon(Icons.handshake),
             title: const Text("My Doantions"),
-            onTap: () {
+            onTap: () async {
+              // await DbHelper.deleteAll(9);
+
               Get.to(const ViewMyDonations());
             },
           ),
