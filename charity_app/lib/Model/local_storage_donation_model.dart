@@ -28,17 +28,17 @@ class LocalDonation {
 
   LocalDonation.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    title = json['title'];
-    description = json['description'];
-    pickup = json['pickup'];
-    itemName = json['itemName'];
-    category = json['category'];
-    quantity = json['quantity'];
+    title = json['title'].toString();
+    description = json['description'].toString();
+    pickup = json['pickup'].toString();
+    itemName = json['itemName'].toString();
+    category = json['category'].toString();
+    quantity = json['quantity'].toString();
 
     attachement = json['attachement'];
-    itemDescription = json['itemDescription'];
-    date = json['date'];
-    status = json['status'];
+    itemDescription = json['itemDescription'].toString();
+    date = json['date'].toString();
+    status = json['status'].toString();
   }
 
   Map<String, dynamic> toJson() {

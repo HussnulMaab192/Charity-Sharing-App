@@ -1,5 +1,4 @@
 import 'dart:typed_data';
-
 import 'package:charity_app/Model/local_storage_donation_model.dart';
 import 'package:charity_app/Screens/auth_screens/signin_screen.dart';
 import 'package:charity_app/constaints.dart';
@@ -14,7 +13,6 @@ import 'package:get/get.dart';
 import '../../../controllers/local_donation_controller.dart';
 import '../../../services/firebase_methods/firebase_methods.dart';
 import '../../../theme.dart';
-
 import '../../../widgets/app_logo_text.dart';
 import '../../../widgets/custom_drawer.dart';
 import '../../../widgets/custom_text_field.dart';
@@ -58,7 +56,7 @@ class _AddDonationState extends State<AddDonation> {
   Widget build(BuildContext context) {
     Get.put(AddMoreList());
     Get.put(PickImage());
-
+    Get.find<LocalDonationController>().getTask();
     // MY-LIST
 
     return SafeArea(
@@ -533,6 +531,7 @@ class _AddDonationState extends State<AddDonation> {
                       preIcon: Icons.numbers,
                       mycontroller: _quantityController,
                       validator: requiredValidator,
+                      keyboardType: TextInputType.number,
                     ),
 
                     // add attachement
@@ -564,54 +563,6 @@ class _AddDonationState extends State<AddDonation> {
                         validator: requiredValidator,
                       );
                     }),
-                    // IF - IMAGE - IS - NULL
-                    // GetBuilder<PickImage>(builder: (value) {
-                    //   return GestureDetector(
-                    //     onTap: () async {
-                    //       await value.pickmyImage();
-                    //     },
-                    //     child: Container(
-                    //       width: double.maxFinite,
-                    //       decoration: BoxDecoration(
-                    //           borderRadius: BorderRadius.circular(16.r),
-                    //           border: Border.all(
-                    //               color: Get.isDarkMode
-                    //                   ? Colors.teal
-                    //                   : primaryLightClr,
-                    //               width: 1)),
-                    //       child: Padding(
-                    //         padding: EdgeInsets.symmetric(
-                    //             vertical: 18.r, horizontal: 8),
-                    //         child: Row(
-                    //           children: [
-                    //             Icon(
-                    //               Icons.attach_file,
-                    //               color: Get.isDarkMode
-                    //                   ? Colors.teal
-                    //                   : primaryLightClr,
-                    //             ),
-                    //             SizedBox(
-                    //               width: 8.w,
-                    //             ),
-                    //             value.image == null
-                    //                 ? const Text(
-                    //                     "Add attachment ",
-                    //                     overflow: TextOverflow.ellipsis,
-                    //                     style: TextStyle(
-                    //                       fontSize: 16,
-                    //                       fontFamily: "Rubik Medium",
-                    //                     ),
-                    //                   )
-                    //                 : Text("image selected!"),
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   );
-                    // }),
-
-                    // IF - USER - SELECTED - IMAGE
-
                     SizedBox(
                       height: 16.h,
                     ),
@@ -713,17 +664,7 @@ class _AddDonationState extends State<AddDonation> {
         radius: 10.0);
   }
 
-  // void _onItemTapped(int myindex) {
-  //   setState(() {
-  //     _selectedIndex = myindex;
-  //   });
-  // }
   void _onItemTapped(int myindex) {
-    // _pageController.animateToPage(myindex,
-    //     curve: Curves.fastLinearToSlowEaseIn,
-    //     duration: Duration(milliseconds: 600),
-
-    // );//
     setState(() {
       _selectedIndex = myindex;
       _pageController.animateToPage(
@@ -738,13 +679,14 @@ class _AddDonationState extends State<AddDonation> {
   bool loading = false;
   // SUBMITING-TO-DATABASE
   submit() async {
+    String res = "Some error occured";
     setState(() {
       loading = true;
     });
     for (var i = 0;
         i < Get.find<LocalDonationController>().taskList.length;
         i++) {
-      String res = await firebsaeMethods.addDonation(
+      res = await firebsaeMethods.addDonation(
         date: DateTime.now(),
         title: Get.find<LocalDonationController>().taskList[i].title.toString(),
         name:
@@ -766,23 +708,22 @@ class _AddDonationState extends State<AddDonation> {
         attachment:
             Get.find<LocalDonationController>().taskList[i].attachement!,
       );
-      if (res == 'success') {
-        setState(() {
-          // Get.find<AddMoreList>().list.clear();
-          _userTitleController.clear();
-          _userDonationDescriptionController.clear();
-          _userAddressController.clear();
-        });
-        await Get.find<LocalDonationController>().deleteAll();
-        print("deleted all data on donation button");
-      } else {
-        setState(() {
-          _userTitleController.clear();
-          _userDonationDescriptionController.clear();
-          _userAddressController.clear();
-        });
-        Get.snackbar('Message', res.toString());
-      }
+    }
+    if (res == 'success') {
+      setState(() {
+        // Get.find<AddMoreList>().list.clear();
+        _userTitleController.clear();
+        _userDonationDescriptionController.clear();
+        _userAddressController.clear();
+      });
+      await Get.find<LocalDonationController>().deleteAll();
+    } else {
+      setState(() {
+        _userTitleController.clear();
+        _userDonationDescriptionController.clear();
+        _userAddressController.clear();
+      });
+      Get.snackbar('Message', res.toString());
     }
     Get.snackbar('Message', "Donated Successfully");
     setState(() {

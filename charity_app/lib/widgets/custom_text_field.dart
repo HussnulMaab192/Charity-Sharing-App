@@ -12,10 +12,12 @@ Widget myTextField({
   required IconData preIcon,
   required TextEditingController mycontroller,
   String? Function(String?)? validator,
+  TextInputType? keyboardType,
 }) {
   return Column(
     children: [
       TextFormField(
+        keyboardType: keyboardType,
         obscureText: isObsecure ?? false,
         controller: mycontroller,
         decoration: InputDecoration(

@@ -97,6 +97,7 @@ class _SignUpState extends State<SignUp> {
                         preIcon: Icons.phone_android,
                         mycontroller: _mobileNumberController,
                         validator: requiredValidator,
+                        keyboardType: TextInputType.number,
                       ),
                       SizedBox(height: 10.h),
 
