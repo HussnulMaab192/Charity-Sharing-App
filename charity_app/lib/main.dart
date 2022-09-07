@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (BuildContext context, Widget? child) {
         return GetMaterialApp(
-          title: 'Flutter Demo',
+          title: 'charity ',
           debugShowCheckedModeBanner: false,
           themeMode: ThemeMode.system,
           darkTheme: Themes.dark,
