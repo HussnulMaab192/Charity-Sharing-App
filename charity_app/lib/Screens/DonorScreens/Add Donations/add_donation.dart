@@ -34,15 +34,33 @@ class _AddDonationState extends State<AddDonation> {
     Icons.person,
   ];
 
-  int _selectedIndex = 0;
   final _alertFormKey = GlobalKey<FormState>();
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _userTitleController = TextEditingController();
+  final TextEditingController _userTitleController = TextEditingController(
+      text: Get.find<LocalDonationController>().taskList.isNotEmpty
+          ? Get.find<LocalDonationController>()
+              .taskList[Get.find<LocalDonationController>().taskList.length - 1]
+              .title
+              .toString()
+          : "");
   final TextEditingController _userDonationDescriptionController =
-      TextEditingController();
+      TextEditingController(
+          text: Get.find<LocalDonationController>().taskList.isNotEmpty
+              ? Get.find<LocalDonationController>()
+                  .taskList[
+                      Get.find<LocalDonationController>().taskList.length - 1]
+                  .itemDescription
+                  .toString()
+              : "");
   final TextEditingController _itemDescriptionController =
       TextEditingController();
-  final TextEditingController _userAddressController = TextEditingController();
+  final TextEditingController _userAddressController = TextEditingController(
+      text: Get.find<LocalDonationController>().taskList.isNotEmpty
+          ? Get.find<LocalDonationController>()
+              .taskList[Get.find<LocalDonationController>().taskList.length - 1]
+              .pickup
+              .toString()
+          : "");
   final TextEditingController _itemNameController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
@@ -218,57 +236,24 @@ class _AddDonationState extends State<AddDonation> {
         key: _formKey,
         child: Column(
           children: [
-            Get.find<LocalDonationController>().taskList.isNotEmpty
-                ? myTextField(
-                    hintText: "Donation Title",
-                    preIcon: Icons.title,
-                    mycontroller: _userTitleController
-                      ..text = Get.find<LocalDonationController>()
-                          .taskList[0]
-                          .title
-                          .toString(),
-                    validator: requiredValidator,
-                  )
-                : myTextField(
-                    hintText: "Donation Title",
-                    preIcon: Icons.title,
-                    mycontroller: _userTitleController,
-                    validator: requiredValidator,
-                  ),
-            Get.find<LocalDonationController>().taskList.isNotEmpty
-                ? myTextField(
-                    hintText: "Description",
-                    preIcon: Icons.description,
-                    mycontroller: _userDonationDescriptionController
-                      ..text = Get.find<LocalDonationController>()
-                              .taskList[0]
-                              .itemDescription ??
-                          '',
-                    validator: requiredValidator,
-                  )
-                : myTextField(
-                    hintText: "Description",
-                    preIcon: Icons.description,
-                    mycontroller: _userDonationDescriptionController,
-                    validator: requiredValidator,
-                  ),
-            Get.find<LocalDonationController>().taskList.isNotEmpty
-                ? myTextField(
-                    hintText: "PickUp location",
-                    preIcon: Icons.location_city_rounded,
-                    mycontroller: _userAddressController
-                      ..text = Get.find<LocalDonationController>()
-                              .taskList[0]
-                              .pickup ??
-                          "",
-                    validator: requiredValidator,
-                  )
-                : myTextField(
-                    hintText: "PickUp location",
-                    preIcon: Icons.location_city_rounded,
-                    mycontroller: _userAddressController,
-                    validator: requiredValidator,
-                  ),
+            myTextField(
+              hintText: "Donation Title",
+              preIcon: Icons.title,
+              mycontroller: _userTitleController,
+              validator: requiredValidator,
+            ),
+            myTextField(
+              hintText: "Description",
+              preIcon: Icons.description,
+              mycontroller: _userDonationDescriptionController,
+              validator: requiredValidator,
+            ),
+            myTextField(
+              hintText: "PickUp location",
+              preIcon: Icons.location_city_rounded,
+              mycontroller: _userAddressController,
+              validator: requiredValidator,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -350,7 +335,7 @@ class _AddDonationState extends State<AddDonation> {
       text: Get.find<LocalDonationController>().taskList[value].description,
     );
     final TextEditingController _userAlertAttachmentController =
-        TextEditingController();
+        TextEditingController(text: "Image is selected ");
     print(
         "**********************************************************************");
     print(Get.find<LocalDonationController>().taskList[value].description);
