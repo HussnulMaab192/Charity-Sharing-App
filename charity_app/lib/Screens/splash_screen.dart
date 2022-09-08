@@ -1,6 +1,8 @@
 import 'package:charity_app/Screens/auth_screens/signin_screen.dart';
+import 'package:charity_app/widgets/app_logo_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../controllers/get_user.dart';
@@ -36,8 +38,13 @@ class _SplashScreenState extends State<SplashScreen> {
     Get.put(UserController());
     Get.put(LocalDonationController());
     Get.find<LocalDonationController>().getTask();
-    return const Scaffold(
-      body: Center(child: FlutterLogo()),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Center(
+          child: Image.asset(
+        "assets/logo/donateLogo.jpg",
+        fit: BoxFit.cover,
+      )),
     );
   }
 }

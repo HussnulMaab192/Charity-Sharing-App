@@ -26,7 +26,7 @@ class FirebsaeMethods {
     try {
       // creating and initailizing the add donotion model  here
       String photoUrl = await StorageMethods()
-          .uploadImageToStorage("DonationItemPicture", attachment, false);
+          .uploadImageToStorage("DonationItemPicture", attachment, true);
       AddDonationModel addDonationModel = AddDonationModel(
         id: FirebaseAuth.instance.currentUser!.uid,
         name: name,

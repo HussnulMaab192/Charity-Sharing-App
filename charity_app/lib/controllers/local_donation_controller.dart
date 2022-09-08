@@ -16,6 +16,9 @@ class LocalDonationController extends GetxController {
     List<Map<String, dynamic>>? tasks = await DBHelper.readData();
 
     taskList.assignAll(tasks!.map((e) => LocalDonation.fromJson(e)).toList());
+    print("**************************");
+    print(taskList.length);
+    print("**************************");
     update();
   }
 

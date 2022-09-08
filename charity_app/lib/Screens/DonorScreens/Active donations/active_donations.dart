@@ -1,6 +1,5 @@
 import 'package:charity_app/widgets/app_logo_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../widgets/custom_card_for_mydoantion.dart';
